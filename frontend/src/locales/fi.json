@@ -1,0 +1,13 @@
+{
+    "welcome": "Tervetuloa LearnHubiin",
+    "email": "Sähköposti",
+    "email_placeholder": "Syötä sähköpostisi",
+    "password": "Salasana",
+    "continue": "Jatka",
+    "continue_with_google": "Jatka Googlella",
+    "continue_with_microsoft": "Jatka Microsoftilla",
+    "continue_with_apple": "Jatka Applen kanssa",
+    "Your name and photo are displayed to users who invite you to a workspace using your email. By continuing, you acknowledge that you understand and agree to these": "Nimesi ja valokuvasi näytetään käyttäjille, jotka kutsuvat sinut työtilaan sähköpostisi avulla. Jatkamalla vahvistat, että ymmärrät ja hyväksyt nämä.",
+    "Terms & Conditions": "Käyttöehdot",
+    "Privacy Policy": "Tietosuojakäytäntö"
+}

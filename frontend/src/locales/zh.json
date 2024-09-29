@@ -1,0 +1,13 @@
+{
+    "welcome": "欢迎来到 LearnHub",
+    "email": "电子邮件",
+    "email_placeholder": "输入您的电子邮件",
+    "password": "密码",
+    "continue": "继续",
+    "continue_with_google": "继续使用 Google",
+    "continue_with_microsoft": "继续使用 Microsoft",
+    "continue_with_apple": "继续使用 Apple",
+    "Your name and photo are displayed to users who invite you to a workspace using your email. By continuing, you acknowledge that you understand and agree to these": "您的姓名和照片将显示给使用您的电子邮件邀请您加入工作区的用户。继续使用即表示您确认并同意这些",
+    "Terms & Conditions": "条款与条件",
+    "Privacy Policy": "隐私政策"
+}

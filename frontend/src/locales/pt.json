@@ -1,0 +1,13 @@
+{
+    "welcome": "Bem-vindo ao LearnHub",
+    "email": "Email",
+    "email_placeholder": "Digite seu email",
+    "password": "Senha",
+    "continue": "Continuar",
+    "continue_with_google": "Continuar com o Google",
+    "continue_with_microsoft": "Continuar com a Microsoft",
+    "continue_with_apple": "Continuar com a Apple",
+    "Your name and photo are displayed to users who invite you to a workspace using your email. By continuing, you acknowledge that you understand and agree to these": "Seu nome e foto são exibidos para usuários que o convidam para um espaço de trabalho usando seu email. Ao continuar, você reconhece que entende e concorda com estes",
+    "Terms & Conditions": "Termos e Condições",
+    "Privacy Policy": "Política de Privacidade"
+}

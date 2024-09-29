@@ -38,13 +38,13 @@ const Header = () => {
             </Link>
             <div className="absolute hidden group-hover:block bg-white shadow-md mt-1 rounded w-40">
               <div className="flex flex-col">
-                <Link to="#" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Documents</Link>
-                <Link to="#" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Resource Vault</Link>
-                <Link to="#" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Video Conferencing</Link>
-                <Link to="#" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Chats</Link>
-                <Link to="#" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Tasks</Link>
-                <Link to="#" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Calendars</Link>
-                <Link to="#" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Timeline Gist</Link>
+                <Link to="/documents" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Documents</Link>
+                <Link to="/resource-vault" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Resource Vault</Link>
+                <Link to="/video-conferencing" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Video Conferencing</Link>
+                <Link to="/chats" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Chats</Link>
+                <Link to="/tasks" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Tasks</Link>
+                <Link to="/calendars" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Calendars</Link>
+                <Link to="/timeline-gist" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Timeline Gist</Link>
               </div>
             </div>
           </div>
@@ -56,10 +56,10 @@ const Header = () => {
             </Link>
             <div className="absolute hidden group-hover:block bg-white shadow-md mt-1 rounded w-40">
               <div className="flex flex-col">
-                <Link to="#" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>College News</Link>
-                <Link to="#" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Career Hunt</Link>
-                <Link to="#" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Study Groups by College</Link>
-                <Link to="#" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Inter-College Collabos</Link>
+                <Link to="/college-news" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>College News</Link>
+                <Link to="/career-hunt" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Career Hunt</Link>
+                <Link to="/study-groups-by-college" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Study Groups by College</Link>
+                <Link to="/inter-college-collabos" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Inter-College Collabos</Link>
               </div>
             </div>
           </div>
@@ -71,19 +71,18 @@ const Header = () => {
             </Link>
             <div className="absolute hidden group-hover:block bg-white shadow-md mt-1 rounded w-40">
               <div className="flex flex-col">
-                <Link to="#" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>The Geng</Link>
-                <Link to="#" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Join the Geng</Link>
-                <Link to="#" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Peer Tutors</Link>
-                <Link to="#" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Collabo with The Geng</Link>
+                <Link to="/the-geng" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>The Geng</Link>
+                <Link to="/join-the-geng" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Join the Geng</Link>
+                <Link to="/peer-tutors" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Peer Tutors</Link>
+                <Link to="/collabo-with-the-geng" className="block px-4 py-1 text-sm text-black font-normal hover:bg-gray-100 w-full" style={{ fontFamily: 'Times New Roman', fontSize: '0.75rem' }}>Collabo with The Geng</Link>
               </div>
             </div>
           </div>
         </div>
 
         <div className="flex items-center space-x-4 ml-auto">
-          <Link to="#" className="text-black text-xs font-bold hover:bg-gray-100 px-2 py-1">Request a Demo</Link>
+          <Link to="/request-demo" className="text-black text-xs font-bold hover:bg-gray-100 px-2 py-1">Request a Demo</Link>
           <span className="text-gray-300 text-xs font-bold">|</span>
-          {/* Update Login link to use Link component */}
           <Link to="/login" className="text-black text-xs font-bold hover:bg-gray-100 px-2 py-1">
             Login
           </Link>
@@ -95,11 +94,9 @@ const Header = () => {
       {isMobileMenuOpen && (
         <nav className="absolute top-14 left-0 w-full bg-white shadow-md md:hidden">
           <div className="flex flex-col space-y-1 p-4">
-            <Link to="#" className="text-black text-xs font-bold hover:bg-gray-100 px-1 py-1">Product</Link>
-            <Link to="#" className="text-black text-xs font-bold hover:bg-gray-100 px-1 py-1">Colleges</Link>
-            <Link to="#" className="text-black text-xs font-bold hover:bg-gray-100 px-1 py-1">Gengs</Link>
-            <Link to="#" className="text-black text-xs font-bold hover:bg-gray-100 px-1 py-1">Pricing</Link>
-            <Link to="#" className="text-black text-xs font-bold hover:bg-gray-100 px-1 py-1">Request a Demo</Link>
+            <Link to="/products" className="text-black text-xs font-bold hover:bg-gray-100 px-1 py-1">Product</Link>
+            <Link to="/colleges" className="text-black text-xs font-bold hover:bg-gray-100 px-1 py-1">Colleges</Link>
+            <Link to="/gengs" className="text-black text-xs font-bold hover:bg-gray-100 px-1 py-1">Gengs</Link>
             <Link to="/login" className="text-black text-xs font-bold hover:bg-gray-100 px-1 py-1">Login</Link>
             <Link to="/signup" className="bg-black text-white rounded-md py-1 px-2 text-xs font-bold">Get LearnHub Free</Link>
           </div>

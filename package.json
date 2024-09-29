@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@fortawesome/free-brands-svg-icons": "^6.6.0",
+    "@react-oauth/google": "^0.12.1"
+  }
+}
