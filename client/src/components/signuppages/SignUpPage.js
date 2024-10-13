@@ -1,54 +1,32 @@
 import React, { useState } from 'react';
 import { GoogleLogin } from '@react-oauth/google';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGoogle } from '@fortawesome/free-brands-svg-icons';
-import { faApple } from '@fortawesome/free-brands-svg-icons';
-
+import { faGoogle, faApple } from '@fortawesome/free-brands-svg-icons';
+import { Alert, AlertIcon, AlertTitle, AlertDescription } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
 const SignUpPage = () => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [dobMonth, setDobMonth] = useState('');
-  const [dobDay, setDobDay] = useState('');
-  const [dobYear, setDobYear] = useState('');
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    dobMonth: '',
+    dobDay: '',
+    dobYear: '',
+  });
+  
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   // Event handlers for input changes
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const handleFirstNameChange = (e) => {
-    setFirstName(e.target.value);
-  };
-
-  const handleLastNameChange = (e) => {
-    setLastName(e.target.value);
-  };
-
-  const handleDobMonthChange = (e) => {
-    setDobMonth(e.target.value);
-  };
-
-  const handleDobDayChange = (e) => {
-    setDobDay(e.target.value);
-  };
-
-  const handleDobYearChange = (e) => {
-    setDobYear(e.target.value);
-  };
-
-    // Submit handler for email signup
+    // Submit 
     const handleSubmit = async (e) => {
       e.preventDefault();
-      console.log('Sign up with email:', email);
+      setError('');
   
       try {
         const response = await fetch('/api/signup', { 
@@ -57,28 +35,20 @@ const SignUpPage = () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ 
-            firstName, 
-            lastName, 
-            email, 
-            password, 
-            dob: { month: dobMonth, day: dobDay, year: dobYear }
+            ...formData,
+            dob: { month: formData.dobMonth, day: formData.dobDay, year: formData.dobYear }
           }),
         });
   
         const data = await response.json();
   
         if (response.ok) {
-          console.log(data.msg);
-          // Store the access token in localStorage
-          localStorage.setItem('accessToken', data.access_token);
-          navigate('/dashboard');
+          navigate('/login');
         } else {
-          console.error(data.msg);
-          alert(data.msg); 
+          setError(data.msg);
         }
       } catch (error) {
-        console.error('Error:', error);
-        alert('Error occurred during signup. Please try again.'); 
+        setError('An error occurred. Please try again.'); 
       }
     };
 
@@ -116,8 +86,18 @@ const SignUpPage = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
       <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
-        <h1 className="text-2xl font-bold text-center mb-6">Learn. Connect. Collaborate.</h1>
-        <div className="space-y-4">
+        <h1 className="text-3xl font-bold text-center mb-6 text-blue-600">Join LearnHub.</h1>
+        <h2 className="text-3xl font-bold text-center mb-6 text-black">Learn. Connect. Collaborate.</h2>
+        
+        {error && (
+          <Alert status="error" className="mb-4">
+          <AlertIcon />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        
+        <div className="space-y-4 mb-6">
           <GoogleLogin
             onSuccess={handleGoogleLogin}
             onFailure={(error) => console.error('Login failed:', error)}
@@ -125,59 +105,90 @@ const SignUpPage = () => {
               <button
                 onClick={renderProps.onClick}
                 disabled={renderProps.disabled}
-                className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition duration-150 ease-in-out"
               >
                 <FontAwesomeIcon icon={faGoogle} style={{ color: '#DB4437' }} className="h-5 w-5 mr-2" />
                 Continue with Google
               </button>
             )}
           />
-          <button className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+          <button className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition duration-150 ease-in-out">
             <FontAwesomeIcon icon={faApple} className="h-5 w-5 mr-2" />
             Continue with Apple
           </button>
-          <button className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-            Single sign-on (SSO)
-          </button>
         </div>
 
-        <div className="mt-6">
-          <form onSubmit={handleSubmit}>
-            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
-              First Name
-            </label>
-            <input
-              type="text"
-              id="firstName"
-              name="firstName"
-              value={firstName}
-              onChange={handleFirstNameChange}
-              placeholder="Enter your first name..."
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              required
-            />
+        <div className="relative mb-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">Or continue with</span>
+            </div>
+            </div>
 
-            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mt-4">
-              Last Name
-            </label>
-            <input
-              type="text"
-              id="lastName"
-              name="lastName"
-              value={lastName}
-              onChange={handleLastNameChange}
-              placeholder="Enter your last name..."
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              required
-            />
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="flex space-x-4">
+              <div className="flex-1">
+                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First Name</label>
+                <input 
+                  type="text"
+                  id="firstName"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  required
+                />
+              </div>
+              <div className="flex-1">
+              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Last Name</label>
+                <input 
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  required
+                />
+              </div>
+            </div>
 
-            <label className="block text-sm font-medium text-gray-700 mt-4">
+            <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+                <input 
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  required
+                />
+            </div>
+            <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+                <input 
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  required
+                />
+            </div>
+            
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
               Date of Birth
             </label>
             <div className="flex space-x-2">
               <select
-                value={dobMonth}
-                onChange={handleDobMonthChange}
+                name="dobMonth"
+                value={formData.dobMonth}
+                onChange={handleChange}
                 className="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 required
               >
@@ -189,8 +200,9 @@ const SignUpPage = () => {
               </select>
 
               <select
-                value={dobDay}
-                onChange={handleDobDayChange}
+                name="dobDay"
+                value={formData.dobDay}
+                onChange={handleChange}
                 className="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 required
               >
@@ -202,8 +214,9 @@ const SignUpPage = () => {
               </select>
 
               <select
-                value={dobYear}
-                onChange={handleDobYearChange}
+                name="dobYear"
+                value={formData.dobYear}
+                onChange={handleChange}
                 className="flex-1 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 required
               >
@@ -214,45 +227,22 @@ const SignUpPage = () => {
                 ))}
               </select>
             </div>
+          </div>
 
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mt-4">
-              Work Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={email}
-              onChange={handleEmailChange}
-              placeholder="Enter your email address..."
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              required
-            />
-            
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mt-4">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={password}
-              onChange={handlePasswordChange}
-              placeholder="Enter your password..."
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              required
-            />
             <button
               type="submit"
-              className="mt-4 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out"
             >
-              Continue
+              Sign Up
             </button>
           </form>
-        </div>
+        
 
         <p className="mt-4 text-xs text-gray-500 text-center">
           Your name and photo are displayed to users who invite you to a workspace using your email.
+        </p>
+        <p className="mt-4 text-xs text-gray-500 text-center">
+          By signing up, you agree to out Terms of Service and Privacy Policy.
         </p>
       </div>
       <div className="mt-4">

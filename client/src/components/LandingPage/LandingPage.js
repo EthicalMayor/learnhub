@@ -11,10 +11,18 @@ import logo2 from '../../assets/logos/harvard-logo.jpg';
 import logo3 from '../../assets/logos/stanford-logo.jpg';
 import logo4 from '../../assets/logos/yale-logo.jpg';
 import logo5 from '../../assets/logos/alx-logo.jpg';
-import heroImage from '../../assets/hero-image.jpg';
+import heroImage from '../../assets/learn.jpg';
+import videoConferencing from '../../assets/hero/videoConferencing.jpg';
+import gengs from '../../assets/hero/gengs.jpg';
+import testimonial1 from '../../assets/testimonial/image.jpg';
+import testimonial2 from '../../assets/testimonial/image2.jpg';
+import testimonial3 from '../../assets/testimonial/image3.jpg';
+import testimonial4 from '../../assets/testimonial/image4.jpg';
+import friends from '../../assets/hero/friends.jpg';
+import running from '../../assets/hero/running.jpg';
 import trustedByImage from '../../assets/trustedbyimage.jpg';
-import featuresImage from '../../assets/features.jpg';
-import chatFeaturesImage from '../../assets/image2.jpg';
+import feature from '../../assets/feature/feature.jpg';
+import chat from '../../assets/chat/chat.jpg';
 import background1 from '../../assets/image3.jpg';
 import background2 from '../../assets/image6.jpg';
 import background3 from '../../assets/image3.jpg';
@@ -38,21 +46,21 @@ const LandingPage = () => {
   ];
 
   const slideContent = [
-    { title: "Learn.", 
-      subtitle: "Expand your knowledge with LearnHub",
-      image: featuresImage
+    { title: "Learn. Connect. Collaborate", 
+      subtitle: " Grow in Style with LearnHub. With a lil help from friends.",
+      image: friends
     },
-    { title: "Connect.", 
-      subtitle: "Build lasting relationships with friends.",
-      image: featuresImage
+    { title: "Connect & Collaborate with Peers Virtually ", 
+      subtitle: "Only on LearnHub",
+      image: videoConferencing
     },
-    { title: "Collaborate.", 
-      subtitle: "Achieve more together through LearnHub.",
-      image: featuresImage
+    { title: "Wanna Join a Geng or Invite a friend?", 
+      subtitle: "Learning gets more enjoyable with LearnHub Gengs.",
+      image: gengs
     },
-    { title: "Excel.", 
-      subtitle: "Chase Excellence, and Success will chase you, pants down.",
-      image: featuresImage
+    { title: "Our Secret to Success?", 
+      subtitle: "Chase EXCELLENCE and SUCCESS will chase you PANTS DOWN!",
+      image: running
     }
   ];
 
@@ -69,23 +77,6 @@ const LandingPage = () => {
 
   const [currentBackground, setCurrentBackground] = useState(background1);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsOriginalContent(false);
-    }, 5000); // Display the default herosection for 5 seconds
-
-    return() => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    if (!isOriginalContent) {
-      const interval = setInterval(() => {
-        setCurrentSlide((prevSlide) +> (prevSlide + 1) % slideContent.length);
-      }, 5000); // Change slide every 5 seconds
-
-      return () => clearInterval(interval);
-    }
-  }, [isOriginalContent]);
   
   useEffect(() => {
       const handleScroll = () => {
@@ -104,6 +95,134 @@ const LandingPage = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
 }, []);
+
+
+useEffect(() => {
+  const interval = setInterval(() => {
+    setCurrentSlide((prevSlide) => (prevSlide + 1) % (slideContent.length + 1));
+  }, 10000); // Change slide every 10 seconds
+
+  return () => clearInterval(interval);
+}, []);
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1,
+    transition: { 
+      duration: 0.5, 
+      when: "beforeChildren",
+      staggerChildren: 0.2
+    }
+  },
+  exit: { 
+    opacity: 0,
+    transition: { duration: 0.5, when: "afterChildren" }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" }
+  },
+  exit: { 
+    opacity: 0, 
+    y: -20,
+    transition: { duration: 0.3 }
+  }
+};
+
+const renderOriginalContent = () => (
+  <motion.div
+    key="original"
+    className="absolute inset-0 z-10 flex items-center"
+    variants={containerVariants}
+    initial="hidden"
+    animate="visible"
+    exit="exit"
+  >
+    <div className="container mx-auto flex flex-col md:flex-row items-center px-4">
+      <div className="md:w-1/2 mb-8 md:mb-0">
+        <motion.h1
+          className="text-8xl font-bold md:mb-10 text-gray-800"
+          variants={itemVariants}
+        >
+          Learn. Connect.
+          <motion.h2 variants={itemVariants}>Collaborate.</motion.h2>
+        </motion.h1>
+        <motion.p
+          className="text-xl mb-12 font-bold text-gray-600 max-w-lg"
+          variants={itemVariants}
+        >
+         Studying only gets better with LearnHub.
+        </motion.p>
+        <motion.div
+          className="space-x-4"
+          variants={itemVariants}
+        >
+          <Link to="/signup" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full text-lg font-bold transition duration-300">Get LearnHub Free</Link>
+          <button className="border border-gray-800 hover:bg-black hover:text-white px-8 py-3 rounded-full text-lg font-bold transition duration-300">Request a Demo</button>
+        </motion.div>
+      </div>
+      <motion.div 
+        className="md:w-1/2"
+        variants={itemVariants}
+      >
+        <div className="rounded-lg overflow-hidden shadow-2xl">
+          <img src={heroImage} alt="LearnHub" className="w-full h-auto object-cover" />
+        </div>
+      </motion.div>
+    </div>
+  </motion.div>
+);
+
+const renderSlideContent = () => (
+  <motion.div
+    key={currentSlide}
+    className="absolute inset-0 bg-cover bg-center"
+    variants={containerVariants}
+    initial="hidden"
+    animate="visible"
+    exit="exit"
+    style={{ backgroundImage: `url(${slideContent[currentSlide].image})` }}
+  >
+    <div className="absolute inset-0 bg-black bg-opacity-50" />
+    <div className="relative z-10 h-full flex items-center">
+      <div className="container mx-auto px-4">
+        <motion.div
+          className="max-w-5xl"
+          variants={itemVariants}
+        >
+          <motion.h1 
+            className="text-5xl font-bold text-white mb-4"
+            variants={itemVariants}
+          >
+            {slideContent[currentSlide].title}
+          </motion.h1>
+          <motion.h2 
+            className="text-3xl font-bold text-white mb-8"
+            variants={itemVariants}
+          >
+            {slideContent[currentSlide].subtitle}
+          </motion.h2>
+        </motion.div>
+      </div>
+    </div>
+  </motion.div>
+);
+
+const renderHeroContent = () => {
+  if (currentSlide === slideContent.length) {
+    return renderOriginalContent();
+  } else {
+    return renderSlideContent();
+  }
+};
+
+
 
   const AnimatedSection = ({ children, direction = 'up' }) => {
     const [ref, inView] = useInView({
@@ -211,7 +330,7 @@ const LandingPage = () => {
         
         />
 
-<header className="bg-white shadow-sm w-full" style={{ zIndex: 10, position: 'fixed', top: 0 }}>
+<header className="bg-white shadow-sm w-full" style={{ zIndex: 20, position: 'fixed', top: 0 }}>
   <div className="container mx-auto flex justify-between items-center py-2 px-4">
     <div className="flex items-center">
       <Link to="/">
@@ -287,99 +406,63 @@ const LandingPage = () => {
   )}
 </header>
 
-  <section className="relative h-screen overflow-hidden">
-    <AnimatePresence>
-      {isOriginalContent ? (
-        <motion.div
-        key="original"
-        className="absolute inset-0 bg-white flex items-center"
-        initial={{ opacity: 0, x: '-100%' }}
-        exit={{ opacity: 0, x: '-100%' }}
-        transition={{ duration: 1 }}
-        >
-          <div className="container mx-auto flex flex-col md:flex-row items-center px-4">
-            <div className="md:w-1/2 mb-8 md:mb-0">
-              <motion.h1
-                className="text-8x1 font-bold md:mb-10 text-gray-800"
-                initial={{ opacity: 0, y: -50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              >
-                Learn. Connect.
-                <h2>Collaborate.</h2>
-              </motion.h1>
-              <motion.p
-              className="text-x1 mb-12 font-bold text-gray-600 max-w-1g"
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              >
-                Studying only gets better with LearnHub. With Gengs.
-              </motion.p>
-              <motion.div 
-                className="space-x-4"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
-                >
-                  <Link to="/signup" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full text-1g font-bold transition duration-300">Get LearnHub Free</Link>
-                  <button className="border border-gray-800 hover:bg-black hover:text-white px-8 py-3 rounded-full text-1g font-bold transition duration-300">Request a Demo</button>
-                </motion.div>
-            </div>
-            <div className="md:w-1/2">
-              <motion.div
-                className="rounded-1g overflow-hidden shadow-2x1"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-              >
-                <img src={heroImage} alt="LearnHub" className="w-full h-auto object"
-              </motion.div>
-            </div>
-          </div>
-        </motion.div>
 
-      )}
-    </AnimatePresence>
-  </section>
+<section className="relative h-screen overflow-hidden pt-16">
+      <AnimatePresence mode="wait">
+      {renderHeroContent()}
+      </AnimatePresence>
+</section>  
+  
+   {/* Trusted by Section */}
 
-    
-    {/* Trusted by Section */}
 <AnimatedSection direction="up">
-  <section className="py-24 bg-gray-100">
+  <section className="py-24">
     <div className="container mx-auto px-4">
-        <h2 className="text-4xl font-bold mb-12 text-white-800 text-center">Trusted by Students at</h2>
-        <div className="flex flex-wrap justify-center items-center mb-12">
-          {logos.map((logo, index) => (
-            <motion.div
+      {/* Heading */}
+      <h2 className="text-5xl font-extrabold mb-16 text-gray-900 text-center leading-tight">
+        Trusted by Students at Leading Institutions
+      </h2>
+      
+      {/* Logos */}
+      <div className="flex flex-wrap justify-center items-center gap-8 mb-16">
+        {logos.map((logo, index) => (
+          <motion.div
             key={index}
-            className="m-4"
-            initial={{ opacity: 0, y: 20 }}
+            className="p-4"
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            >
-              <img src={logo.src} alt={logo.name} className="text-black h-16 object-contain" />
-            </motion.div>
-          ))}
-        </div>
-        <motion.div
-        className="rounded-lg overflow-hidden shadow-2x1"
+            transition={{ duration: 0.6, delay: index * 0.15 }}
+          >
+            <img 
+              src={logo.src} 
+              alt={logo.name} 
+              className="h-20 object-contain hover:grayscale-0 transition duration-300 ease-in-out" 
+            />
+          </motion.div>
+        ))}
+      </div>
+      
+      {/* Image Section */}
+      <motion.div
+        className="overflow-hidden rounded-lg shadow-lg"
         initial={{ opacity: 0, y: 100 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        >
-         <img src={trustedByImage} alt="Students using LearnHub" className="w-full h-auto object-cover" />
-        </motion.div>
-      </div>
+        transition={{ duration: 1, ease: "easeInOut" }}
+      >
+        <img
+          src={trustedByImage}
+          alt="Students using LearnHub"
+          className="w-full h-auto object-cover"
+        />
+      </motion.div>
+    </div>
   </section>
 </AnimatedSection>
-
-
 
         {/* Features Section */}
 
     <AnimatedSection direction="right">
-  <section className="py-24 bg-gray-50">
+  <section className="py-24">
     <div className="container mx-auto px-4">
       <h2 className="text-4xl font-bold mb-8 text-center text-gray-800">
       Collaborate in a Geng and show your creativity.
@@ -398,7 +481,7 @@ const LandingPage = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <img src={featuresImage} alt="LearnHub Features" className="w-full h-auto object-cover" />
+          <img src={feature} alt="LearnHub Features" className="w-full h-auto object-cover" />
         </motion.div>
       </div>
     </div>
@@ -419,7 +502,7 @@ const LandingPage = () => {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.8 }}
                   >
-                  <img src={chatFeaturesImage} alt="LearnHub Chat Features" className="w-full h-auto object-cover" />
+                  <img src={chat} alt="LearnHub Chat Features" className="w-full h-auto object-cover" />
                   </motion.div>
                   </div>
                 <div className="md:w-1/2 md:pl-8 grid grid-cols-1 gap-8 ">
@@ -434,41 +517,86 @@ const LandingPage = () => {
 
     
 
-{/* Testimonials Section */}
+        {/* Testimonials Section */}
 <AnimatedSection direction="up">
-  <section className="py-24">
+  <section className="py-24 bg-gray-50">
     <div className="max-w-6xl mx-auto px-4">
-      <h2 className="text-4xl font-bold mb-16 text-center text-gray-600">What Our Users Have to Say</h2>
+      {/* Heading */}
+      <h2 className="text-5xl font-extrabold mb-16 text-center text-gray-800 leading-tight">
+        What Our Users Have to Say
+      </h2>
+      
+      {/* Testimonials Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex items-center space-x-6">
-          <img src="../../assets/image5.jpg" alt="Timi Johnson" className="w-24 h-24 rounded-full object-cover" />
+        
+        {/* Testimonial 1 */}
+        <motion.div 
+          whileHover={{ scale: 1.05 }} 
+          whileTap={{ scale: 0.95 }} 
+          className="flex items-center space-x-6 p-6 bg-white shadow-md rounded-lg"
+        >
+          <img 
+            src={testimonial1}
+            alt="Timi Johnson" 
+            className="w-24 h-24 rounded-full object-cover" 
+          />
           <TestimonialCard 
             quote="LearnHub has completely transformed how I collaborate with my study group. The chat features are intuitive and make communication a breeze!"
             author="Timi Johnson, Computer Science Major"
           />
         </motion.div>
-        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex items-center space-x-6">
-          <img src="../../assets/hero-image.jpg" alt="Michael R." className="w-24 h-24 rounded-full object-cover" 
-           />
+        
+        {/* Testimonial 2 */}
+        <motion.div 
+          whileHover={{ scale: 1.05 }} 
+          whileTap={{ scale: 0.95 }} 
+          className="flex items-center space-x-6 p-6 bg-white shadow-md rounded-lg"
+        >
+          <img 
+            src={testimonial2}
+            alt="Michael R." 
+            className="w-24 h-24 rounded-full object-cover" 
+          />
           <TestimonialCard 
-            quote="As a postgraduate student, LearnHub has made it so much easier to manage my classes online due to the distance and communicate with my fellow students. It's an indispensable tool for modern education."
-            author="Michael R., Ph.D in Psychology"
+            quote="As a postgraduate student, LearnHub has made it so much easier to manage my classes online and communicate with my fellow students. It's an indispensable tool for modern education."
+            author="Alexa R., Ph.D in Psychology"
           />
         </motion.div>
-        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex items-center space-x-6">
-          <img src="../../assets/image4.jpg" alt="Alex T." className="w-24 h-24 rounded-full object-cover" />
+
+        {/* Testimonial 3 */}
+        <motion.div 
+          whileHover={{ scale: 1.05 }} 
+          whileTap={{ scale: 0.95 }} 
+          className="flex items-center space-x-6 p-6 bg-white shadow-md rounded-lg"
+        >
+          <img 
+            src={testimonial3}
+            alt="Alex T." 
+            className="w-24 h-24 rounded-full object-cover" 
+          />
           <TestimonialCard 
             quote="The collaborative features have revolutionized our group projects. It's like having a virtual study room available 24/7!"
             author="Alex T., Engineering Student"
           />
         </motion.div>
-        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex items-center space-x-6">
-          <img src="../../assets/image2.jpg" alt="Emily L." className="w-24 h-24 rounded-full object-cover" />
+
+        {/* Testimonial 4 */}
+        <motion.div 
+          whileHover={{ scale: 1.05 }} 
+          whileTap={{ scale: 0.95 }} 
+          className="flex items-center space-x-6 p-6 bg-white shadow-md rounded-lg"
+        >
+          <img 
+            src={testimonial4} 
+            alt="Emily L." 
+            className="w-24 h-24 rounded-full object-cover" 
+          />
           <TestimonialCard 
             quote="LearnHub's task management tools have helped me stay organized and on top of my coursework. My productivity has skyrocketed!"
             author="Emily L., Psychology Major"
           />
         </motion.div>
+        
       </div>
     </div>
   </section>
@@ -538,3 +666,6 @@ const LandingPage = () => {
 
 
 export default LandingPage;
+  
+    
+
