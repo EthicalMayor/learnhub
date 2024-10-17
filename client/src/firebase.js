@@ -8,13 +8,14 @@ import {
 } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_FIREBASE_APP_ID
-  };
+  apiKey: "AIzaSyBUX8J6huZEovXGgAClrjmoeAs_DoVCHGQ",
+  authDomain: "learnhub-4b1aa.firebaseapp.com",
+  projectId: "learnhub-4b1aa",
+  storageBucket: "learnhub-4b1aa.appspot.com",
+  messagingSenderId: "334725354818",
+  appId: "1:334725354818:web:e1977fc6dd5803c3be24db"
+
+};
 
 // Initialize Firebase
   
