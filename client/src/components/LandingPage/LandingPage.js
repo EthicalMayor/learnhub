@@ -162,13 +162,14 @@ const renderOriginalContent = () => (
     animate="visible"
     exit="exit"
   >
-    <div className="container mx-auto flex flex-col md:flex-row items-center px-4 space-y-8 md:space-y-0">
+     <div className="container mx-auto flex flex-col md:flex-row items-center px-4 space-y-8 md:space-y-0">
       <div className="w-full md:w-1/2 text-center md:text-left">
         <motion.h1
-          className="text-4xl md:text-6x1 lg:text-8x1 font-bold mb-4 md:mb-10 text-gray-800"
+          className="text-4xl md:text-5xl lg:text-7xl font-bold mb-4 md:mb-10 text-gray-800 flex flex-col"
           variants={itemVariants}
         >
-          Learn. Connect.
+          <span className="block">Learn.</span>
+          <span className="block">Connect.</span>
           <span className="block">Collaborate.</span>
         </motion.h1>
         <motion.p
@@ -202,37 +203,119 @@ const renderOriginalContent = () => (
 const renderSlideContent = () => (
   <motion.div
     key={currentSlide}
-    className="absolute inset-0 bg-cover bg-center"
+    className="absolute inset-0"
     variants={containerVariants}
     initial="hidden"
     animate="visible"
     exit="exit"
-    style={{ backgroundImage: `url(${slideContent[currentSlide].image})` }}
   >
-    <div className="absolute inset-0 bg-black bg-opacity-50" />
+    {/* Image container with responsive background */}
+    <div 
+    className="absolute inset-0 bg-cover bg-center bg-no-repeat w-full h-full" 
+    style={{ 
+        backgroundImage: `url(${slideContent[currentSlide].image})`,
+        // Add height constraint for very tall screens
+        minHeight: '100vh'
+      }}
+    >
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-black bg-opacity-50" />
+    </div>
+
+    {/* Content container */}
     <div className="relative z-10 h-full flex items-center justify-center">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8">
         <motion.div
           className="max-w-5xl mx-auto text-center"
           variants={itemVariants}
         >
           <motion.h1 
-            className="text-3xl md:text-5xl lg:text-7xl font-bold text-white mb-4"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-4 leading-tight"
             variants={itemVariants}
           >
             {slideContent[currentSlide].title}
           </motion.h1>
           <motion.h2 
-            className="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-8"
+            className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white mb-8 leading-relaxed"
             variants={itemVariants}
           >
             {slideContent[currentSlide].subtitle}
           </motion.h2>
+            {/* Optional: Add call-to-action buttons for slides */}
+            <motion.div
+            className="hidden md:flex justify-center space-x-4"
+            variants={itemVariants}
+          >
+            <Link 
+              to="/signup" 
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full text-lg font-bold transition duration-300"
+            >
+              Get Started
+            </Link>
+            <button className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-black px-6 py-3 rounded-full text-lg font-bold transition duration-300">
+              Learn More
+            </button>
+          </motion.div>
         </motion.div>
+      </div>
+    </div>
+      {/* Optional: Add navigation dots */}
+    <div className="absolute bottom-8 left-0 right-0 z-20">
+      <div className="flex justify-center space-x-2">
+        {slideContent.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentSlide(index)}
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              currentSlide === index ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/75'
+            }`}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
       </div>
     </div>
   </motion.div>
 );
+
+// Optional: Add swipe functionality for mobile
+useEffect(() => {
+  let touchStartX = 0;
+  let touchEndX = 0;
+  
+  const handleTouchStart = (e) => {
+    touchStartX = e.touches[0].clientX;
+  };
+  
+  const handleTouchMove = (e) => {
+    touchEndX = e.touches[0].clientX;
+  };
+  
+  const handleTouchEnd = () => {
+    const difference = touchStartX - touchEndX;
+    if (Math.abs(difference) > 50) { // Minimum swipe distance
+      if (difference > 0) {
+        // Swipe left - next slide
+        setCurrentSlide((prev) => (prev + 1) % (slideContent.length + 1));
+      } else {
+        // Swipe right - previous slide
+        setCurrentSlide((prev) => (prev - 1 + (slideContent.length + 1)) % (slideContent.length + 1));
+      }
+    }
+  };
+
+  const element = document.querySelector('.hero-slideshow');
+  if (element) {
+    element.addEventListener('touchstart', handleTouchStart);
+    element.addEventListener('touchmove', handleTouchMove);
+    element.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      element.removeEventListener('touchstart', handleTouchStart);
+      element.removeEventListener('touchmove', handleTouchMove);
+      element.removeEventListener('touchend', handleTouchEnd);
+    };
+  }
+}, [slideContent.length]);
 
 
 const NavDropdown = ({ title, items }) => {
