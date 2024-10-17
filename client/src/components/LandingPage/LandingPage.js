@@ -44,7 +44,7 @@ const LandingPage = () => {
     { src: logo5, name: 'ALX' },
     { src: logo6, name: 'ALU' },
   ];
-
+ 
   const slideContent = [
     { title: "Your Journey, Our Pathway", 
       subtitle: "Learning is Better Together. Grow in Style with LearnHub",
@@ -102,7 +102,8 @@ useEffect(() => {
   }, 10000); // Change slide every 10 seconds
 
   return () => clearInterval(interval);
-}, []);
+},[slideContent.length]); // Add dependency to fix warning
+
 
 const FadeInSection = ({ children }) => {
   const [ref, inView] = useInView({
@@ -161,31 +162,33 @@ const renderOriginalContent = () => (
     animate="visible"
     exit="exit"
   >
-    <div className="container mx-auto flex flex-col md:flex-row items-center px-4">
-      <div className="md:w-1/2 mb-8 md:mb-0">
+    <div className="container mx-auto flex flex-col md:flex-row items-center px-4 space-y-8 md:space-y-0">
+      <div className="w-full md:w-1/2 text-center md:text-left">
         <motion.h1
-          className="text-8xl font-bold md:mb-10 text-gray-800"
+          className="text-4xl md:text-6x1 lg:text-8x1 font-bold mb-4 md:mb-10 text-gray-800"
           variants={itemVariants}
         >
           Learn. Connect.
-          <motion.h2 variants={itemVariants}>Collaborate.</motion.h2>
+          <span className="block">Collaborate.</span>
         </motion.h1>
         <motion.p
-          className="text-xl mb-12 font-bold text-gray-600 max-w-lg"
+          className="text-lg md:text-xl mb-8 md:mb-12 font-bold text-gray-600 max-w-lg mx-auto md:mx-0"
           variants={itemVariants}
         >
          Studying only gets better with LearnHub.
         </motion.p>
         <motion.div
-          className="space-x-4"
+          className="space-y-4 md:space-y-0 md:space-x-4"
           variants={itemVariants}
         >
-          <Link to="/signup" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full text-lg font-bold transition duration-300">Get LearnHub Free</Link>
-          <button className="border border-gray-800 hover:bg-black hover:text-white px-8 py-3 rounded-full text-lg font-bold transition duration-300">Request a Demo</button>
+          <Link 
+          to="/signup" 
+          className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 md:px-8 py-3 rounded-full text-lg font-bold transition duration-300">Get LearnHub Free</Link>
+          <button className="inline-block border border-gray-800 hover:bg-black hover:text-white px-6 md:px-8 py-3 rounded-full text-lg font-bold transition duration-300">Request a Demo</button>
         </motion.div>
       </div>
       <motion.div 
-        className="md:w-1/2"
+        className="w-full md:w-1/2"
         variants={itemVariants}
       >
         <div className="rounded-lg overflow-hidden shadow-2xl">
@@ -199,28 +202,28 @@ const renderOriginalContent = () => (
 const renderSlideContent = () => (
   <motion.div
     key={currentSlide}
-    className="absolute inset-0 bg-cover text-center bg-center"
+    className="absolute inset-0 bg-cover bg-center"
     variants={containerVariants}
     initial="hidden"
     animate="visible"
     exit="exit"
     style={{ backgroundImage: `url(${slideContent[currentSlide].image})` }}
   >
-    <div className="absolute text-center inset-0 bg-black bg-opacity-50" />
+    <div className="absolute inset-0 bg-black bg-opacity-50" />
     <div className="relative z-10 h-full flex items-center justify-center">
       <div className="container mx-auto px-4">
         <motion.div
-          className="max-w-5xl mx-auto"
+          className="max-w-5xl mx-auto text-center"
           variants={itemVariants}
         >
           <motion.h1 
-            className="text-7xl font-bold text-white mb-4"
+            className="text-3xl md:text-5xl lg:text-7xl font-bold text-white mb-4"
             variants={itemVariants}
           >
             {slideContent[currentSlide].title}
           </motion.h1>
           <motion.h2 
-            className="text-3xl font-bold text-white mb-8"
+            className="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-8"
             variants={itemVariants}
           >
             {slideContent[currentSlide].subtitle}
@@ -231,31 +234,55 @@ const renderSlideContent = () => (
   </motion.div>
 );
 
-const renderHeroContent = () => {
-  if (currentSlide === slideContent.length) {
-    return renderOriginalContent();
-  } else {
-    return renderSlideContent();
-  }
+
+const NavDropdown = ({ title, items }) => {
+const [isOpen, setIsOpen] = useState(false);
+const [timeoutId, setTimeoutId] = useState(null);
+
+const handleMouseEnter = () => {
+  if (timeoutId) clearTimeout(timeoutId);
+  setIsOpen(true);
 };
 
+const handleMouseLeave = () => {
+  const id = setTimeout(() => setIsOpen(false), 150);
+  setTimeoutId(id);
+};
 
-  const NavDropdown = ({ title, items }) => (
-    <div className="relative group">
-      <button className="text-black text-xs font-bold hover:text-gray-600 transition duration-300">
-        {title}
-      </button>
-      <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg hidden group-hover:block">
-        {items.map((item, index) => (
-          <Link key={index} to={item.path} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-            <FontAwesomeIcon icon={item.icon} className="mr-2" />
-            {item.title}
-          </Link>
-        ))}
-      </div>
-    </div>
-  );
-
+return (
+  <div 
+    className="relative group"
+    onMouseEnter={handleMouseEnter}
+    onMouseLeave={handleMouseLeave}
+  >
+    <button className="text-black text-sm lg:text-base font-bold hover:text-gray-600 transition duration-300">
+      {title}
+    </button>
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}
+          className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50"
+        >
+          {items.map((item, index) => (
+            <Link
+              key={index}
+              to={item.path}
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-300"
+            >
+              <FontAwesomeIcon icon={item.icon} className="mr-2" />
+              {item.title}
+            </Link>
+          ))}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  </div>
+);
+};
   const MobileNavItem = ({ title, items }) => (
     <div className="py-2">
       <button className="w-full text-left text-black font-bold py-2">{title}</button>
@@ -308,91 +335,102 @@ const renderHeroContent = () => {
 
   return (
     <div className="relative font-sans text-black min-h-screen bg-white">
-      <motion.div
-        className="fixed inset-0 z-0 bg-cover bg-center transition-all duration-1000"
-        
-        />
+      <header className="bg-white shadow-sm w-full" style={{ zIndex: 20, position: 'fixed', top: 0 }}>
+        <div className="container mx-auto flex justify-between items-center py-2 px-4">
+          <div className="flex items-center">
+            <Link to="/">
+              <img src={logo} alt="LearnHub Logo" className="h-11 w-16 mr-2" />
+            </Link>
+            <h1 className="text-2xl font-bold text-black ml-1">LearnHub</h1>
+          </div>
 
-<header className="bg-white shadow-sm w-full" style={{ zIndex: 20, position: 'fixed', top: 0 }}>
-  <div className="container mx-auto flex justify-between items-center py-2 px-4">
-    <div className="flex items-center">
-      <Link to="/">
-        <img src={logo} alt="LearnHub Logo" className="h-11 w-16 mr-2" />
-      </Link>
-      <h1 className="text-2x1 font-bold text-black ml-1">LearnHub</h1>
-    </div>
-
-    {/* Hamburger Menu Icon for mobile */}
-    <div className="block md:hidden">
-      <button onClick={toggleMobileMenu} className="text-black focus:outline-none">
-        <FontAwesomeIcon icon={faBars} className="text-2xl" />
-      </button>
-    </div>
+      {/* Hamburger Menu Icon for mobile */}
+          <div className="block md:hidden">
+            <button onClick={toggleMobileMenu} className="text-black focus:outline-none">
+              <FontAwesomeIcon icon={faBars} className="text-2xl" />
+            </button>
+          </div>
 
     {/* Full Navigation for larger screens */}
-    <nav className="text-1g hidden md:flex w-full justify-between items-center">
-      <div className="text-2g flex space-x-6 ml-12">
-        <NavDropdown 
-          title="Product" 
+          <nav className="hidden md:flex w-full justify-between items-center">
+            <div className="flex space-x-6 ml-12">
+              <NavDropdown 
+                title="Product" 
+                items={[
+                  { title: 'Documents', path: '/signup', icon: faFileText },
+                  { title: 'Resource Vault', path: '/signup', icon: faGraduationCap },
+                  { title: 'Video Conferencing', path: '/signup', icon: faComments },
+                  { title: 'Chats', path: '/signup', icon: faComments },
+                  { title: 'Tasks', path: '/signup', icon: faCheckSquare },
+                  { title: 'Calendars', path: '/signup', icon: faCalendar },
+                ]}
+              />
+              <NavDropdown 
+                title="Colleges" 
+                items={[
+                  { title: 'College News', path: '/signup', icon: faNewspaper },
+                  { title: 'Career Hunt', path: '/signup', icon: faBriefcase },
+                ]} />
+              <NavDropdown 
+                title="Gengs" 
+                items={[
+                  { title: 'The Geng', path: '/signup', icon: faUsers },
+                  { title: 'Join the Geng', path: '/signup', icon: faUserPlus },
+                ]} 
+              />
+            </div>
+
+            <div className="flex items-center space-x-4 ml-auto">
+              <Link to="/signup" className="text-black text-xs font-bold hover:text-gray-600 transition duration-300">Request a Demo</Link>
+              <span className="text-gray-500 text-xs font-bold">|</span>
+              <Link to="/login" className="text-black text-xs font-bold hover:text-gray-600 transition duration-300">Login</Link>
+              <Link to="/signup" className="bg-blue-600 hover:bg-blue-700 text-white rounded-full py-2 px-4 text-xs font-bold transition duration-300">Get LearnHub Free</Link>
+            </div>
+          </nav>
+        </div>
+
+          {/* Mobile Navigation for smaller screens */}
+        {isMobileMenuOpen && (
+          <nav className="md:hidden bg-white border-t border-gray-200">
+            <div className="container mx-auto px-4 py-2">
+              <MobileNavItem 
+                title="Product" 
+                items={[
+                  { title: 'Documents', path: '/signup' },
+                  { title: 'Resource Vault', path: '/signup' },
+                  { title: 'Video Conferencing', path: '/signup' },
+                  { title: 'Chats', path: '/signup' },
+                  { title: 'Tasks', path: '/signup' },
+                  { title: 'Calendars', path: '/signup' },
+                ]}  
+              />
+        <MobileNavItem 
+          title="Colleges" 
           items={[
-            { title: 'Documents', path: '/documents', icon: faFileText },
-            { title: 'Resource Vault', path: '/resource-vault', icon: faGraduationCap },
-            { title: 'Video Conferencing', path: '/video-conferencing', icon: faComments },
-            { title: 'Chats', path: '/chats', icon: faComments },
-            { title: 'Tasks', path: '/tasks', icon: faCheckSquare },
-            { title: 'Calendars', path: '/calendars', icon: faCalendar },
-          ]}
+            { title: 'College News', path: '/signup' },
+            { title: 'Career Hunt', path: '/signup' },
+          ]}            
         />
-        <NavDropdown title="Colleges" items={[
-          { title: 'College News', path: '/college-news', icon: faNewspaper },
-          { title: 'Career Hunt', path: '/career-hunt', icon: faBriefcase },
-        ]} />
-        <NavDropdown title="Gengs" items={[
-          { title: 'The Geng', path: '/the-geng', icon: faUsers },
-          { title: 'Join the Geng', path: '/join-the-geng', icon: faUserPlus },
-        ]} />
+        <MobileNavItem 
+          title="Gengs" 
+          items={[
+            { title: 'The Geng', path: '/signup' },
+            { title: 'Join the Geng', path: '/signup' },
+          ]} 
+        />
+        <div className="mt-4 space-y-2">
+          <Link to="/login" className="block py-2 text-black hover:bg-gray-100">Login</Link>
+          <Link to="/signup" className="block py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-full text-center">Get LearnHub Free</Link>
       </div>
-
-      <div className="flex items-center space-x-4 ml-auto">
-        <Link to="/request-demo" className="text-black text-xs font-bold hover:text-gray-600 transition duration-300">Request a Demo</Link>
-        <span className="text-gray-500 text-xs font-bold">|</span>
-        <Link to="/login" className="text-black text-xs font-bold hover:text-gray-600 transition duration-300">Login</Link>
-        <Link to="/signup" className="bg-blue-600 hover:bg-blue-700 text-white rounded-full py-2 px-4 text-xs font-bold transition duration-300">Get LearnHub Free</Link>
-      </div>
-    </nav>
-  </div>
-
-  {/* Mobile Navigation for smaller screens */}
-  {isMobileMenuOpen && (
-    <nav className="md:hidden bg-white bg-opacity-t">
-      <div className="container mx-auto px-4 py-2">
-        <MobileNavItem title="Product" items={[
-          { title: 'Documents', path: '/documents' },
-          { title: 'Resource Vault', path: '/resource-vault' },
-          { title: 'Video Conferencing', path: '/video-conferencing' },
-          { title: 'Chats', path: '/chats' },
-          { title: 'Tasks', path: '/tasks' },
-          { title: 'Calendars', path: '/calendars' },
-        ]} />
-        <MobileNavItem title="Colleges" items={[
-          { title: 'College News', path: '/college-news' },
-          { title: 'Career Hunt', path: '/career-hunt' },
-        ]} />
-        <MobileNavItem title="Gengs" items={[
-          { title: 'The Geng', path: '/the-geng' },
-          { title: 'Join the Geng', path: '/join-the-geng' },
-        ]} />
-        <Link to="/login" className="block py-2 text-black hover:bg-gray-100">Login</Link>
-        <Link to="/signup" className="block py-2 bg-blue-600 text-white hover:bg-blue-700 rounded mt-2">Get LearnHub Free</Link>
-      </div>
-    </nav>
-  )}
+    </div>
+  </nav>
+)}
 </header>
 
 
 <section className="relative h-screen overflow-hidden pt-16">
       <AnimatePresence mode="wait">
-      {renderHeroContent()}
+      {currentSlide === slideContent.length ? renderOriginalContent() : renderSlideContent()}
       </AnimatePresence>
 </section>  
   
