@@ -4,8 +4,12 @@ import {
   Camera, Book, Archive, Video, MessageSquare, CheckSquare, Calendar, Newspaper, 
   Briefcase, Users, Globe, UserPlus, GraduationCap, Users as UsersIcon, BarChart, Bell, Settings, LogOut
 } from 'lucide-react';
+import { useUser } from '../../contexts/UserContext';
+
 
 const Dashboard = () => {
+  const { user } = useUser();
+
   return (
     <div className="min-h-screen flex bg-white text-black">
       {/* Sidebar */}
@@ -34,7 +38,7 @@ const Dashboard = () => {
         {/* Header */}
         <header className="flex justify-between items-center mb-8">
           <div>
-            <h2 className="text-3xl font-bold">Welcome, [User Name]</h2>
+            <h2 className="text-3xl font-bold">Welcome, {user ? `${user.firstName} ${user.lastName}` : 'User'}</h2>
             <p className="text-gray-400">Here’s what’s happening today</p>
           </div>
           <div className="flex space-x-4">

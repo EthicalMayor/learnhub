@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { googleAuth } from '../../services/authService';
 import { Globe } from 'lucide-react';
+import { useUser } from '../../contexts/UserContext';
+import { faRProject } from '@fortawesome/free-brands-svg-icons';
+
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -10,7 +13,8 @@ const LoginPage = () => {
   const [language, setLanguage] = useState('English');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-
+  const { setUser } = useUser();
+ 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
   };
@@ -23,12 +27,33 @@ const LoginPage = () => {
     setLanguage(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Log in with email:', email);
-    console.log('Password:', password);
-    navigate('/dashboard');
+    setError(''); // Clear previous errors
+  
+    try {
+      const response = await fetch('http://localhost:8080/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }), // Send login credentials
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        setUser({ firstName: data.firstName, lastName: data.lastName });
+        navigate('/dashboard'); // Navigate to dashboard if login is successful
+      } else {
+        setError(data.msg || 'Invalid credentials. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setError('Invalid credentials. Please try again.');
+    }
   };
+  
 
   const handleGoogleLogin = async (credentialResponse) => {
     const token = credentialResponse.credential;
