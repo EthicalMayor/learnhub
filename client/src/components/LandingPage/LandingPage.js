@@ -103,17 +103,17 @@ const LandingPage = () => {
     { title: "Real-time Collaborations", 
       subtitle: "Exclusively on LearnHub",
       image: videoConferencing,
-      style: { backgroundImage: `url(${imageCache.current.get(friends) ? friends : ''})` }
+      style: { backgroundImage: `url(${imageCache.current.get(videoConferencing) ? videoConferencing : ''})` }
     },
     { title: "Wanna Join a Geng or Invite a friend? ", 
       subtitle: "Learning is more fun with LearnHub Gengs.",
       image: gengs,
-      style: { backgroundImage: `url(${imageCache.current.get(friends) ? friends : ''})` }
+      style: { backgroundImage: `url(${imageCache.current.get(gengs) ? gengs : ''})` }
     },
     { title: "Our Secret to Success?", 
       subtitle: "Chase EXCELLENCE and SUCCESS will chase you PANTS DOWN!",
       image: running,
-      style: { backgroundImage: `url(${imageCache.current.get(friends) ? friends : ''})` }
+      style: { backgroundImage: `url(${imageCache.current.get(running) ? running : ''})` }
     }
   ];
 
