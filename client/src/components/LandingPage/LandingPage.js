@@ -1,4 +1,4 @@
-import  React, { useState, useEffect, useRef } from 'react';
+import  React, { useState, useEffect } from 'react';
 import { BookOpen, Camera, Laptop, MessageCircle, Users, Calendar, FileText } from 'lucide-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faFileText, faGraduationCap, faComments, faCheckSquare, faCalendar, faNewspaper, faBriefcase, faUsers, faUserPlus } from '@fortawesome/free-solid-svg-icons';
@@ -31,59 +31,10 @@ import background3 from '../../assets/image3.jpg';
 const LandingPage = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [imagesLoaded, setImagesLoaded] = useState(false);
-  const imageCache = useRef(new Map());
-
-
  
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
- const preloadImages = async () => {
-    const imagesToPreload = [
-      friends,
-      videoConferencing,
-      gengs,
-      running,
-      heroImage,
-      ...logos.map(logo => logo.src),
-      trustedByImage,
-      feature,
-      chat,
-      ...testimonials.map(t => t.image)
-    ];
-
-    const loadImage = (src) => {
-      return new Promise((resolve, reject) => {
-        if (imageCache.current.has(src)) {
-          resolve();
-          return;
-        }
-
-        const img = new Image();
-        img.src = src;
-        img.onload = () => {
-          imageCache.current.set(src, true);
-          resolve();
-        };
-        img.onerror = reject;
-      });
-    };
-
-    
-    try {
-      await Promise.all(imagesToPreload.map(loadImage));
-      setImagesLoaded(true);
-    } catch (error) {
-      console.error('Error preloading images:', error);
-      // Still set images as loaded to not block rendering
-      setImagesLoaded(true);
-    }
-  };
-
-  useEffect(() => {
-    preloadImages();
-  }, []);
 
   const logos = [
     { src: logo1, name: 'MIT' },
@@ -97,23 +48,19 @@ const LandingPage = () => {
   const slideContent = [
     { title: "Your Journey, Our Pathway", 
       subtitle: "Learning is Better Together. Grow in Style with LearnHub",
-      image: friends,
-      style: { backgroundImage: `url(${imageCache.current.get(friends) ? friends : ''})` }
+      image: friends
     },
     { title: "Real-time Collaborations", 
       subtitle: "Exclusively on LearnHub",
-      image: videoConferencing,
-      style: { backgroundImage: `url(${imageCache.current.get(videoConferencing) ? videoConferencing : ''})` }
+      image: videoConferencing
     },
     { title: "Wanna Join a Geng or Invite a friend? ", 
       subtitle: "Learning is more fun with LearnHub Gengs.",
-      image: gengs,
-      style: { backgroundImage: `url(${imageCache.current.get(gengs) ? gengs : ''})` }
+      image: gengs
     },
     { title: "Our Secret to Success?", 
       subtitle: "Chase EXCELLENCE and SUCCESS will chase you PANTS DOWN!",
-      image: running,
-      style: { backgroundImage: `url(${imageCache.current.get(running) ? running : ''})` }
+      image: running
     }
   ];
 
@@ -264,28 +211,16 @@ const renderSlideContent = () => (
   >
     {/* Image container with responsive background */}
     <div 
-    className={`absolute inset-0 bg-cover bg-center bg-no-repeat w-full h-full transition-opacity duration-300 ${
-      imagesLoaded ? 'opacity-100' : 'opacity-0'
-      }`}
+    className="absolute inset-0 bg-cover bg-center bg-no-repeat w-full h-full" 
     style={{ 
         backgroundImage: `url(${slideContent[currentSlide].image})`,
         // Add height constraint for very tall screens
-        minHeight: '100vh',
-        transform: 'translate3d(0, 0, 0)', // Force GPU acceleration
-        willChange: 'transform', // Optimize for animations
+        minHeight: '100vh'
       }}
     >
       {/* Overlay */}
       <div className="absolute inset-0 bg-black bg-opacity-50" />
     </div>
-
-
-        {/* Loading indicator */}
-      {!imagesLoaded && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-        </div>
-      )}
 
     {/* Content container */}
     <div className="relative z-10 h-full flex items-center justify-center">
@@ -341,46 +276,6 @@ const renderSlideContent = () => (
     </div>
   </motion.div>
 );
-
-// Modified slideshow interval
-  useEffect(() => {
-    if (!imagesLoaded) return; // Don't start carousel until images are loaded
-
-    const interval = setInterval(() => {
-      setCurrentSlide((prevSlide) => (prevSlide + 1) % (slideContent.length + 1));
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [imagesLoaded, slideContent.length]);
-
-  // Add intersection observer for optimized loading
-  const slideshowRef = useRef(null);
-
-
-   useEffect(() => {
-    const options = {
-      root: null,
-      rootMargin: '50px',
-      threshold: 0.1
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && !imagesLoaded) {
-          preloadImages();
-        }
-      });
-    }, options);
-      if (slideshowRef.current) {
-      observer.observe(slideshowRef.current);
-    }
-
-    return () => {
-      if (slideshowRef.current) {
-        observer.unobserve(slideshowRef.current);
-      }
-    };
-  }, []);
 
 // Optional: Add swipe functionality for mobile
 useEffect(() => {
@@ -616,12 +511,12 @@ return (
 </header>
 
 
-
-      <section ref={slideshowRef} className="relative h-screen overflow-hidden pt-16">
-        <AnimatePresence mode="wait">
-          {currentSlide === slideContent.length ? renderOriginalContent() : renderSlideContent()}
-        </AnimatePresence>
-      </section>
+<section className="relative h-screen overflow-hidden pt-16">
+      <AnimatePresence mode="wait">
+      {currentSlide === slideContent.length ? renderOriginalContent() : renderSlideContent()}
+      </AnimatePresence>
+</section>  
+  
 
       {/* Improved Trusted by Section */}
       <FadeInSection>
