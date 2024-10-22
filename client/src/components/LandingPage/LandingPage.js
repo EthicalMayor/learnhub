@@ -54,8 +54,8 @@ const LandingPage = () => {
       subtitle: "Exclusively on LearnHub",
       image: videoConferencing
     },
-    { title: "Wanna Join a Geng or Invite a friend? ", 
-      subtitle: "Learning is more fun with LearnHub Gengs.",
+    { title: "Create and Share Documents Easily ", 
+      subtitle: "Learning is more fun with Learnhub",
       image: gengs
     },
     { title: "Our Secret to Success?", 
@@ -440,7 +440,7 @@ return (
               <NavDropdown 
                 title="Product" 
                 items={[
-                  { title: 'Documents', path: '/signup', icon: faFileText },
+                  { title: 'Documents', path: '/document', icon: faFileText },
                   { title: 'Resource Vault', path: '/signup', icon: faGraduationCap },
                   { title: 'Video Conferencing', path: '/signup', icon: faComments },
                   { title: 'Chats', path: '/signup', icon: faComments },
@@ -479,7 +479,7 @@ return (
               <MobileNavItem 
                 title="Product" 
                 items={[
-                  { title: 'Documents', path: '/signup' },
+                  { title: 'Documents', path: '/document' },
                   { title: 'Resource Vault', path: '/signup' },
                   { title: 'Video Conferencing', path: '/signup' },
                   { title: 'Chats', path: '/signup' },

@@ -10,6 +10,7 @@ import LoginPage from './components/loginPage/LoginPage';
 import SignUpPage from './components/signuppages/SignUpPage';
 import ChatPage from './components/chatpages/chatpage';
 import Dashboard from './components/dashboardpages/dashboard';
+import Document from './component/documents/document';
 
 // Your firebaseConfig object should be defined here
 const firebaseConfig = {
@@ -37,6 +38,7 @@ const App = () => {
               <Route path="/signup" element={<SignUpPage />} />
               <Route path="/chats" element={<ChatPage />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/document" element={<Document />} />
             </Routes>
           </Router>
         </GoogleOAuthProvider>
