@@ -11,6 +11,7 @@ import SignUpPage from './components/signuppages/SignUpPage';
 import ChatPage from './components/chatpages/chatpage';
 import Dashboard from './components/dashboardpages/dashboard';
 import Document from './components/documents/document';
+import ResourceVaultPreview from './components/resource-vault/resource-vault';
 
 // Your firebaseConfig object should be defined here
 const firebaseConfig = {
@@ -39,6 +40,7 @@ const App = () => {
               <Route path="/chats" element={<ChatPage />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/document" element={<Document />} />
+              <Route path="/resource" element={<ResourceVaultPreview />} />
             </Routes>
           </Router>
         </GoogleOAuthProvider>

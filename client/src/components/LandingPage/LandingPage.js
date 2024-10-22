@@ -3,7 +3,7 @@ import { BookOpen, Camera, Laptop, MessageCircle, Users, Calendar, FileText } fr
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faFileText, faGraduationCap, faComments, faCheckSquare, faCalendar, faNewspaper, faBriefcase, faUsers, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { motion, useScroll, useAnimation, useTransform, useSpring, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, Button } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
 import logo from '../../assets/logos/learnhub-logo.png';
 import logo1 from '../../assets/logos/mit-logo.jpg';
@@ -441,7 +441,7 @@ return (
                 title="Product" 
                 items={[
                   { title: 'Documents', path: '/document', icon: faFileText },
-                  { title: 'Resource Vault', path: '/signup', icon: faGraduationCap },
+                  { title: 'Resource Vault', path: '/resource', icon: faGraduationCap },
                   { title: 'Video Conferencing', path: '/signup', icon: faComments },
                   { title: 'Chats', path: '/signup', icon: faComments },
                   { title: 'Tasks', path: '/signup', icon: faCheckSquare },
@@ -480,7 +480,7 @@ return (
                 title="Product" 
                 items={[
                   { title: 'Documents', path: '/document' },
-                  { title: 'Resource Vault', path: '/signup' },
+                  { title: 'Resource Vault', path: '/resource' },
                   { title: 'Video Conferencing', path: '/signup' },
                   { title: 'Chats', path: '/signup' },
                   { title: 'Tasks', path: '/signup' },
