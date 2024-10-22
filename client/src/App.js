@@ -10,7 +10,7 @@ import LoginPage from './components/loginPage/LoginPage';
 import SignUpPage from './components/signuppages/SignUpPage';
 import ChatPage from './components/chatpages/chatpage';
 import Dashboard from './components/dashboardpages/dashboard';
-import Document from './component/documents/document';
+import Document from './components/documents/document';
 
 // Your firebaseConfig object should be defined here
 const firebaseConfig = {

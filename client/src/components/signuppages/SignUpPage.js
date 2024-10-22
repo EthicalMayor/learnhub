@@ -1,16 +1,12 @@
 import React, { useState } from 'react';
-import { 
-  auth,
-  createUserWithEmailAndPassword,
-  signInWithPopup ,
-  updateProfile,
-  GoogleAuthProvider
- } from '../../firebase';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGoogle, faApple } from '@fortawesome/free-brands-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGoogle } from '@fortawesome/free-brands-svg-icons';
+import { signInWithGoogle, signUpWithEmail } from '../../services/authService';
 
 const SignUpPage = () => {
+  const navigate = useNavigate();
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -18,92 +14,38 @@ const SignUpPage = () => {
     password: '',
     dobMonth: '',
     dobDay: '',
-    dobYear: '',
+    dobYear: ''
   });
 
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
-  const googleProvider = new GoogleAuthProvider();
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
 
   const handleGoogleSignIn = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-
-
-      // Extract name parts from Google Display name
-
-      const nameParts = user.displayName?.split(' ') || ['', ''];
-      const firstName = nameParts[0];
-      const lastName = nameParts[nameParts.length - 1];
-
-      // send user data to backend
-      await fetch('http://localhost:8080/api/user-profile', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${await user.getIdToken()}`,
-        },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          email: user.email,
-        }),
-      });
+      const user = await signInWithGoogle();
       navigate('/dashboard');
     } catch (error) {
       setError(error.message);
     }
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
     try {
-      // Create user with email and password
-      const userCredential = await createUserWithEmailAndPassword(
-        auth, 
-        formData.email,
-        formData.password
-      );
-      // Update profile with display name
-      await updateProfile(userCredential.user, {
-        displayName: `${formData.firstName} ${formData.lastName}`,
-      });
-
-      // Send additional user data to your server
-
-
-      await fetch('http://localhost:8080/api/user-profile', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${await userCredential.user.getIdToken()}`,
-        },
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          dob: {
-            month: parseInt(formData.dobMonth, 10),
-            day: parseInt(formData.dobDay, 10),
-            year: parseInt(formData.dobYear, 10),
-          },
-        }),
-      });
-
+      const user = await signUpWithEmail(formData);
       navigate('/dashboard');
     } catch (error) {
       setError(error.message);
     }
   };
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
       <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
@@ -113,11 +55,11 @@ const SignUpPage = () => {
         <div className="space-y-4 mb-6">
           <button
             onClick={handleGoogleSignIn}
-              className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition duration-150 ease-in-out"
-              >
-                <FontAwesomeIcon icon={faGoogle} style={{ color: '#DB4437' }} className="h-5 w-5 mr-2" />
-                Continue with Google
-              </button>    
+            className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition duration-150 ease-in-out"
+          >
+            <FontAwesomeIcon icon={faGoogle} style={{ color: '#DB4437' }} className="h-5 w-5 mr-2" />
+            Continue with Google
+          </button>    
         </div>
 
         <div className="relative mb-6">
@@ -207,7 +149,6 @@ const SignUpPage = () => {
                 required
               >
                 <option value="">Day</option>
-                {/* Day options */}
                 {Array.from({ length: 31 }, (_, i) => (
                   <option key={i} value={i + 1}>{i + 1}</option>
                 ))}
@@ -221,28 +162,26 @@ const SignUpPage = () => {
                 required
               >
                 <option value="">Year</option>
-                {/* Year options */}
                 {Array.from({ length: 100 }, (_, i) => (
-                  <option key={i} value={2023 - i}>{2023 - i}</option>
+                  <option key={i} value={2024 - i}>{2024 - i}</option>
                 ))}
               </select>
             </div>
           </div>
 
-            <button
-              type="submit"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out"
-            >
-              Sign Up
-            </button>
-          </form>
-        
+          <button
+            type="submit"
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out"
+          >
+            Sign Up
+          </button>
+        </form>
 
         <p className="mt-4 text-xs text-gray-500 text-center">
           Your name and photo are displayed to users who invite you to a workspace using your email.
         </p>
         <p className="mt-4 text-xs text-gray-500 text-center">
-          By signing up, you agree to out Terms of Service and Privacy Policy.
+          By signing up, you agree to our Terms of Service and Privacy Policy.
         </p>
       </div>
       <div className="mt-4">

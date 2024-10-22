@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
-import { googleAuth } from '../../services/authService';
 import { Globe } from 'lucide-react';
 import { useUser } from '../../contexts/UserContext';
 import { faRProject } from '@fortawesome/free-brands-svg-icons';
@@ -58,7 +57,7 @@ const LoginPage = () => {
   const handleGoogleLogin = async (credentialResponse) => {
     const token = credentialResponse.credential;
     try {
-      const result = await googleAuth(token);
+      const result = await GoogleLogin(token);
       alert(result.msg);
       navigate('/dashboard');
     } catch (error) {
