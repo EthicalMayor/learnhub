@@ -443,7 +443,7 @@ return (
                   { title: 'Documents', path: '/document', icon: faFileText },
                   { title: 'Resource Vault', path: '/resource', icon: faGraduationCap },
                   { title: 'Video Conferencing', path: '/signup', icon: faComments },
-                  { title: 'Chats', path: '/signup', icon: faComments },
+                  { title: 'Chats', path: '/chat', icon: faComments },
                   { title: 'Tasks', path: '/signup', icon: faCheckSquare },
                   { title: 'Calendars', path: '/signup', icon: faCalendar },
                 ]}
@@ -482,7 +482,7 @@ return (
                   { title: 'Documents', path: '/document' },
                   { title: 'Resource Vault', path: '/resource' },
                   { title: 'Video Conferencing', path: '/signup' },
-                  { title: 'Chats', path: '/signup' },
+                  { title: 'Chats', path: '/chat' },
                   { title: 'Tasks', path: '/signup' },
                   { title: 'Calendars', path: '/signup' },
                 ]}  
