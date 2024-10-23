@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { ChevronLeft, ChevronRight, Clock, Calendar, Lock, Star, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock, Calendar, Star, Sparkles, Lock } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -20,7 +20,6 @@ import {
   TooltipTrigger,
 } from "../custom-components/custom-components";
 import { Button } from "../custom-components/custom-components";
-import { Input } from "../custom-components/custom-components";
 import { Badge } from "../custom-components/custom-components";
 import { Alert, AlertTitle, AlertDescription } from "../custom-components/custom-components";
 
@@ -40,10 +39,7 @@ const PREVIEW_FEATURES = [
 
 const CalendarPreview = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
-  const [interactionCount, setInteractionCount] = useState(0);
-  const [hasShownFeaturePrompt, setHasShownFeaturePrompt] = useState(false);
 
   // Demo events to showcase calendar capabilities
   const events = [
@@ -53,23 +49,12 @@ const CalendarPreview = () => {
   ];
 
   const navigateMonth = useCallback((direction) => {
-    setInteractionCount(prev => prev + 1);
     setCurrentDate(prev => {
       const newDate = new Date(prev);
       newDate.setMonth(prev.getMonth() + direction);
       return newDate;
     });
-
-    // Show sign-up prompt after a few interactions
-    if (interactionCount === 2 && !hasShownFeaturePrompt) {
-      setHasShownFeaturePrompt(true);
-      setIsSignUpModalOpen(true);
-    }
-  }, [interactionCount, hasShownFeaturePrompt]);
-
-  const handleAddEventClick = () => {
-    setIsSignUpModalOpen(true);
-  };
+  }, []);
 
   const getDaysInMonth = useCallback(() => {
     return new Date(
@@ -114,10 +99,10 @@ const CalendarPreview = () => {
           <Tooltip>
             <TooltipTrigger asChild>
               <div
-                className={`h-24 p-2 rounded-lg transition-all border relative group
+                className={`h-24 p-2 rounded-lg transition-all border relative
                   ${isToday ? 'border-blue-500 bg-blue-50/50' : 'border-gray-100 hover:border-gray-200'}
                   ${dayEvents.length ? 'cursor-pointer' : ''}`}
-                onClick={() => dayEvents.length && handleAddEventClick()}
+                onClick={() => dayEvents.length && setIsSignUpModalOpen(true)}
               >
                 <div className="flex justify-between items-start">
                   <span className={`text-sm font-medium ${
@@ -150,20 +135,18 @@ const CalendarPreview = () => {
                     </div>
                   )}
                 </div>
-                <div className="absolute inset-0 bg-white/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <Lock className="w-5 h-5 text-gray-400" />
-                </div>
+                {dayEvents.length > 0 && (
+                  <div className="absolute inset-0 bg-white/0 hover:bg-white/80 transition-all flex items-center justify-center opacity-0 hover:opacity-100">
+                    <Button size="sm" variant="secondary" className="flex items-center gap-2">
+                      <Lock className="w-4 h-4" />
+                      View Details
+                    </Button>
+                  </div>
+                )}
               </div>
             </TooltipTrigger>
             <TooltipContent>
-              <div className="p-2">
-                <div className="font-medium mb-1">
-                  {dayEvents.length ? `${dayEvents.length} events` : 'No events'}
-                </div>
-                <div className="text-sm text-gray-500">
-                  Sign up to view and manage events
-                </div>
-              </div>
+              <p className="text-sm">Sign up to view full event details</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -177,9 +160,9 @@ const CalendarPreview = () => {
     <Dialog open={isSignUpModalOpen} onOpenChange={setIsSignUpModalOpen}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle className="text-2xl">Unlock Full Calendar Features</DialogTitle>
+          <DialogTitle className="text-2xl">Get Full Calendar Access</DialogTitle>
           <DialogDescription>
-            Sign up now to access all premium features and start managing your schedule like a pro.
+            Sign up now to unlock all features and start managing your schedule effectively.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-6 py-4">
@@ -195,25 +178,18 @@ const CalendarPreview = () => {
           <Alert>
             <AlertTitle className="flex items-center gap-2">
               <Star className="w-4 h-4" />
-              Special Launch Offer
+              Limited Time Offer
             </AlertTitle>
             <AlertDescription>
-              Sign up today and get 3 months free premium access!
+              Sign up today
             </AlertDescription>
           </Alert>
-          <div className="flex flex-col gap-4">
+          <div className="space-y-4">
             <Button
               className="w-full bg-blue-600 hover:bg-blue-700"
               onClick={() => window.location.href = '/signup'}
             >
-              Sign Up Now
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => setIsSignUpModalOpen(false)}
-            >
-              Continue Previewing
+              Sign Up
             </Button>
           </div>
         </div>
@@ -226,7 +202,7 @@ const CalendarPreview = () => {
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900">Calendar Preview</h1>
+            <h1 className="text-4xl font-bold text-gray-900">LearnHub Calendar</h1>
             <p className="text-gray-600 mt-2">
               Experience our powerful calendar features
             </p>
@@ -234,18 +210,18 @@ const CalendarPreview = () => {
           <div className="flex gap-4">
             <Button
               variant="outline"
-              onClick={handleAddEventClick}
+              onClick={() => setIsSignUpModalOpen(true)}
               className="flex items-center gap-2"
             >
               <Calendar className="w-4 h-4" />
-              Add Event
+              Log In 
             </Button>
             <Button
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
               onClick={() => setIsSignUpModalOpen(true)}
             >
               <Star className="w-4 h-4" />
-              Sign Up Now
+              Sign Up now
             </Button>
           </div>
         </div>
