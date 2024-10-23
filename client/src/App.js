@@ -18,7 +18,7 @@ import CalendarPreview from './components/calendarpages/calendarPreview';
 import CollegeNews from './components/CollegesPages/collegeNews';
 import CareerHunt from './components/CollegesPages/careerHunt';
 import TheGeng from './components/gengpages/thegeng';
-import JoinGengPage from './components/gengpages/jointhegeng';
+import JoinTheGeng from './components/gengpages/jointhegeng';
 
 // Your firebaseConfig object should be defined here
 const firebaseConfig = {
@@ -53,8 +53,8 @@ const App = () => {
               <Route path="/calendar" element={<CalendarPreview />} />
               <Route path="/college-news" element={<CollegeNews />} />
               <Route path="/career-hunt" element={<CareerHunt />} />
-              <Route path="/the-geng" element={<TheGengPage />} />
-              <Route path="/join-the-geng" element={<JoinGeng />} />
+              <Route path="/the-geng" element={<TheGeng />} />
+              <Route path="/join-the-geng" element={<JoinTheGeng />} />
             </Routes>
           </Router>
         </GoogleOAuthProvider>
