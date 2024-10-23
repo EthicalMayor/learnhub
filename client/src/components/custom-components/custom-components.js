@@ -85,6 +85,34 @@ const Button = ({
     );
   };
   
+  // Modal Component
+const Modal = ({ isOpen, onClose, children }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div className="bg-white rounded-lg shadow-lg max-w-sm w-full p-6">
+        <button className="absolute top-4 right-4 text-gray-600" onClick={onClose}>
+          &times;
+        </button>
+        {children}
+      </div>
+    </div>
+  );
+};
+
+// Tooltip Component
+const Tooltip = ({ children, text }) => {
+  return (
+    <div className="relative inline-block">
+      {children}
+      <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 p-2 bg-gray-800 text-white text-sm rounded opacity-0 transition-opacity duration-200 ease-in-out">
+        {text}
+      </div>
+    </div>
+  );
+};
+
   // Input Component
   const Input = ({
     className = "",
@@ -121,7 +149,9 @@ const Button = ({
     AlertTitle,
     AlertDescription,
     Button,
-    Input
+    Input,
+    Modal,
+    Tooltip
   };
 
   
