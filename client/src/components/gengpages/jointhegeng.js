@@ -1,46 +1,94 @@
-import React from 'react';
-import Navigation from "@/components/Navigation";
-import { Form, Button } from "@/components/ui/button";
+import React, { useState } from 'react';
+import { Input } from "../custom-components/custom-components";
+import { Button } from "../custom-components/custom-components";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "../custom-components/custom-components";
 
-export const JoinGengPage = () => {
+const JoinTheGeng = () => {
+  const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle sign-up logic (e.g., API call)
+    console.log('Form Submitted:', formData);
+    setIsSignUpModalOpen(false); // Close modal on submit
+  };
+
   return (
-    <>
-      <Navigation currentPage="join" />
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 py-8">
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-gray-900">Join The Geng</h1>
-            <p className="text-gray-600 mt-2">Become a part of our vibrant community!</p>
-          </div>
+    <div className="p-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-4xl font-bold text-gray-900 text-center mb-6">Join The Geng</h1>
+        <p className="text-center text-gray-600 mb-4">
+          Sign up to become a part of our community of passionate learners and innovators.
+        </p>
+        
+        <Button
+          onClick={() => setIsSignUpModalOpen(true)}
+          className="mx-auto block bg-blue-600 hover:bg-blue-700 text-white"
+        >
+          Join Now
+        </Button>
 
-          <Form className="bg-white p-6 rounded shadow-md mb-8">
-            <div className="mb-4">
-              <label className="block mb-1">Name</label>
-              <input type="text" className="w-full p-2 border border-gray-300 rounded" required />
-            </div>
-            <div className="mb-4">
-              <label className="block mb-1">Email</label>
-              <input type="email" className="w-full p-2 border border-gray-300 rounded" required />
-            </div>
-            <div className="mb-4">
-              <label className="block mb-1">Interests</label>
-              <input type="text" className="w-full p-2 border border-gray-300 rounded" placeholder="e.g. Coding, Design" required />
-            </div>
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700">Join Now</Button>
-          </Form>
+        <Dialog open={isSignUpModalOpen} onOpenChange={setIsSignUpModalOpen}>
+          <DialogContent className="sm:max-w-[600px] transition-all duration-300 ease-in-out">
+            <DialogHeader>
+              <DialogTitle className="text-2xl">Sign Up for The Geng</DialogTitle>
+              <DialogDescription className="text-gray-600">
+                Fill in your details to join our community!
+              </DialogDescription>
+            </DialogHeader>
 
-          {/* Sign Up Prompt */}
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Ready to dive in?</h2>
-            <p className="text-gray-600 mb-6">Join us and collaborate with like-minded peers.</p>
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-              Sign Up
-            </Button>
-          </div>
-        </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <Input
+                name="name"
+                type="text"
+                placeholder="Full Name"
+                value={formData.name}
+                onChange={handleInputChange}
+                required
+              />
+              <Input
+                name="email"
+                type="email"
+                placeholder="Email Address"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+              />
+              <Input
+                name="password"
+                type="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleInputChange}
+                required
+              />
+              <div className="flex gap-4">
+                <Button type="submit" className="flex-1 bg-blue-600 hover:bg-blue-700">
+                  Sign Up
+                </Button>
+                <Button variant="outline" className="flex-1" onClick={() => setIsSignUpModalOpen(false)}>
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
-    </>
+    </div>
   );
 };
 
-export default JoinGengPage;
+export default JoinTheGeng;

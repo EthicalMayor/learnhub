@@ -1,81 +1,82 @@
-// pages/CollegeNewsPage.jsx
-import React from 'react';
-import { Card, CardContent, Badge } from "../custom-components/custom-components";
-import { Building2, Calendar, ExternalLink } from 'lucide-react';
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "../custom-components/custom-components";
 import { Button } from "../custom-components/custom-components";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "../custom-components/custom-components";
 
-export const CollegeNewsPage = () => {
-  const news = [
+const CollegeNews = () => {
+  const [news, setNews] = useState([
     {
-      college: "Tech University",
-      title: "New AI Research Center Opening",
-      date: "Oct 24, 2024",
-      category: "Research",
-      excerpt: "State-of-the-art facility to drive innovation in artificial intelligence...",
-      image: ""
+      id: 1,
+      title: "New Library Opens at University of Michigan",
+      date: "October 20, 2024",
+      summary: "The new library at University Michigan features state-of-the-art facilities.",
+      fullContent: "The newly opened library at University Michigan provides students with advanced study spaces, a digital media lab, and extensive collections of academic resources."
     },
     {
-      college: "Business School",
-      title: "International Business Summit",
-      date: "Oct 25, 2024",
-      category: "Events",
-      excerpt: "Leading industry experts gather to discuss global market trends...",
-      image: "/api/placeholder/800/400"
-    }
-  ];
+      id: 2,
+      title: "MIT Hosts Annual Science Fair",
+      date: "October 27, 2024",
+      summary: "MIT's science fair showcased innovative student projects.",
+      fullContent: "Students from various departments presented their projects, ranging from robotics to environmental science, attracting local media attention."
+    },
+    {
+      id: 3,
+      title: "ALU Receives Prestigious Accreditation",
+      date: "October 18, 2024",
+      summary: "ALU has been accredited by the National Educational Association.",
+      fullContent: "This accreditation is a testament to the quality of education offered at ALU and enhances the value of degrees earned by its students."
+    },
+  ]);
+
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [selectedNews, setSelectedNews] = useState(null);
+
+  const handleNewsClick = (newsItem) => {
+    setSelectedNews(newsItem);
+    setIsDetailModalOpen(true);
+  };
+
+  const NewsDetailModal = () => (
+    <Dialog open={isDetailModalOpen} onOpenChange={setIsDetailModalOpen}>
+      <DialogContent className="sm:max-w-[600px]">
+        <DialogHeader>
+          <DialogTitle className="text-2xl">{selectedNews?.title}</DialogTitle>
+          <DialogDescription className="text-gray-600">
+            {selectedNews?.description}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="py-4">
+          <p>{selectedNews?.fullContent}</p>
+        </div>
+        <Button onClick={() => setIsDetailModalOpen(false)}>Close</Button>
+      </DialogContent>
+    </Dialog>
+  );
 
   return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 py-8">
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-gray-900">College News</h1>
-            <p className="text-gray-600 mt-2">Stay updated with the latest happenings across campus</p>
-          </div>
-          
-          <div className="grid gap-6">
-            {news.map((item, index) => (
-              <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <img 
-                    src={item.image} 
-                    alt={item.title}
-                    className="w-full h-64 object-cover"
-                  />
-                  <CardContent className="p-6">
-                    <Badge className="mb-2">{item.category}</Badge>
-                    <h3 className="text-2xl font-semibold mb-2">{item.title}</h3>
-                    <p className="text-gray-600 mb-4">{item.excerpt}</p>
-                    <div className="flex items-center gap-4 text-sm text-gray-500">
-                      <span className="flex items-center gap-1">
-                        <Building2 className="w-4 h-4" />
-                        {item.college}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        {item.date}
-                      </span>
-                    </div>
-                    <Button className="mt-4">
-                      Read More
-                      <ExternalLink className="w-4 h-4 ml-2" />
-                    </Button>
-                  </CardContent>
-                </div>
-              </Card>
-            ))}
-          </div>
+    <div className="p-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-4xl font-bold text-gray-900">College News</h1>
+        <p className="text-gray-600 mt-2">Stay updated with the latest news from various campuses</p>
 
-          {/* Sign Up Prompt */}
-          <div className="mt-8 text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Join LearnHub Today!</h2>
-            <p className="text-gray-600 mb-6">Sign up now to stay updated with the latest news and connect with other students.</p>
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-              Sign Up
-            </Button>
-          </div>
+        <div className="grid grid-cols-1 gap-6 mt-6">
+          {news.map((newsItem) => (
+            <Card key={newsItem.id} onClick={() => handleNewsClick(newsItem)} className="cursor-pointer">
+              <CardHeader>
+                <CardTitle className="text-xl">{newsItem.title}</CardTitle>
+                <p className="text-gray-500">{newsItem.date}</p>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-700">{newsItem.summary}</p>
+              </CardContent>
+            </Card>
+          ))}
         </div>
+
+        {selectedNews && <NewsDetailModal />}
       </div>
+    </div>
   );
 };
 
-export default CollegeNewsPage;
+export default CollegeNews;
