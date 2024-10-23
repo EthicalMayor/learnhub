@@ -15,6 +15,10 @@ import ResourceVaultPreview from './components/resource-vault/resource-vault';
 import VideoConferencingPreview from './components/videoConferencing/videoConferencing';
 import TaskPreview from './components/taskPages/taskPreview';
 import CalendarPreview from './components/calendarpages/calendarPreview';
+import CollegeNewsPage from './components/CollegesPages/collegeNews';
+import CareerHuntPage from './components/CollegesPages/careerHunt';
+import TheGengPage from './components/gengpages/thegeng';
+import JoinGengPage from './components/gengpages/jointhegeng';
 
 // Your firebaseConfig object should be defined here
 const firebaseConfig = {
@@ -47,6 +51,10 @@ const App = () => {
               <Route path="/video-conferencing" element={<VideoConferencingPreview />} />
               <Route path="/task" element={<TaskPreview />} />
               <Route path="/calendar" element={<CalendarPreview />} />
+              <Route path="/college-news" element={<CollegeNewsPage />} />
+              <Route path="/career-hunt" element={<CareerHuntPage />} />
+              <Route path="/the-geng" element={<TheGengPage />} />
+              <Route path="/join-the-geng" element={<JoinGengPage />} />
             </Routes>
           </Router>
         </GoogleOAuthProvider>
