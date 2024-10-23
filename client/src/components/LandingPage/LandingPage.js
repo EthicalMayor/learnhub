@@ -444,7 +444,7 @@ return (
                   { title: 'Resource Vault', path: '/resource', icon: faGraduationCap },
                   { title: 'Video Conferencing', path: '/video-conferencing', icon: faComments },
                   { title: 'Chats', path: '/chat', icon: faComments },
-                  { title: 'Tasks', path: '/signup', icon: faCheckSquare },
+                  { title: 'Tasks', path: '/task', icon: faCheckSquare },
                   { title: 'Calendars', path: '/signup', icon: faCalendar },
                 ]}
               />
@@ -483,7 +483,7 @@ return (
                   { title: 'Resource Vault', path: '/resource' },
                   { title: 'Video Conferencing', path: '/video-conferencing' },
                   { title: 'Chats', path: '/chat' },
-                  { title: 'Tasks', path: '/signup' },
+                  { title: 'Tasks', path: '/task' },
                   { title: 'Calendars', path: '/signup' },
                 ]}  
               />
