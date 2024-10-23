@@ -8,7 +8,8 @@ import {
   Filter,
   Search,
   Layout,
-  X
+  X,
+  Lock as LockIcon
 } from 'lucide-react';
 import {
   Card,
@@ -91,7 +92,25 @@ const CalendarPreview = () => {
       }
     };
   
-  
+    const goToToday = () => {
+        setCurrentDate(new Date());
+      };
+      
+      const navigateDate = (direction) => {
+        const newDate = new Date(currentDate);
+        if (view === ViewOptions.MONTH) {
+          newDate.setMonth(currentDate.getMonth() + direction);
+        } else if (view === ViewOptions.WEEK) {
+          newDate.setDate(currentDate.getDate() + (direction * 7));
+        } else {
+          newDate.setDate(currentDate.getDate() + direction);
+        }
+        setCurrentDate(newDate);
+      };
+      
+      const deleteEvent = (eventId) => {
+        setEvents(prev => prev.filter(event => event.id !== eventId));
+      };
     const renderCalendarDays = useCallback(() => {
         const cells = [];
         const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
