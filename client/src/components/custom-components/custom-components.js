@@ -139,19 +139,139 @@ const Tooltip = ({ children, text }) => {
     );
   };
 
-  
-  export {
-    Card,
-    CardHeader,
-    CardTitle,
-    CardContent,
-    Alert,
-    AlertTitle,
-    AlertDescription,
-    Button,
-    Input,
-    Modal,
-    Tooltip
+ 
+// Dialog Components
+const Dialog = ({ children, open = false, onOpenChange }) => {
+  if (!open) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center"
+      onClick={() => onOpenChange?.(false)}
+    >
+      <div 
+        className="relative"
+        onClick={e => e.stopPropagation()}
+      >
+        {children}
+      </div>
+    </div>
+  );
+};
+
+const DialogContent = ({ children, className = "" }) => (
+  <div className={`
+    w-full max-w-lg bg-white rounded-lg shadow-lg
+    animate-in fade-in-0 zoom-in-95
+    p-6 relative
+    max-h-[90vh] overflow-y-auto
+    ${className}
+  `}>
+    {children}
+  </div>
+);
+
+const DialogHeader = ({ className = "", children }) => (
+  <div className={`flex flex-col space-y-1.5 text-center sm:text-left ${className}`}>
+    {children}
+  </div>
+);
+
+const DialogTitle = ({ className = "", children }) => (
+  <h2 className={`text-lg font-semibold leading-none tracking-tight ${className}`}>
+    {children}
+  </h2>
+);
+
+const DialogDescription = ({ className = "", children }) => (
+  <p className={`text-sm text-gray-500 ${className}`}>
+    {children}
+  </p>
+);
+
+// Tooltip Components
+const TooltipProvider = ({ children }) => (
+  <div className="relative inline-block">
+    {children}
+  </div>
+);
+
+const TooltipTrigger = ({ asChild, children, ...props }) => {
+  const Component = asChild ? 'div' : 'button';
+  return (
+    <Component 
+      {...props}
+      className={`inline-block ${props.className || ''}`}
+    >
+      {children}
+    </Component>
+  );
+};
+
+const TooltipContent = ({ children, className = "" }) => (
+  <div className={`
+    absolute z-50 px-3 py-2
+    bg-gray-900 text-white
+    rounded-md shadow-lg
+    text-sm
+    animate-in fade-in-0 zoom-in-95
+    bottom-full mb-2 
+    left-1/2 transform -translate-x-1/2
+    ${className}
+  `}>
+    <div className="relative">
+      {children}
+      <div className="absolute bottom-[-6px] left-1/2 transform -translate-x-1/2 
+        border-4 border-transparent border-t-gray-900" />
+    </div>
+  </div>
+);
+
+// Badge Component
+const Badge = ({ 
+  children, 
+  className = "", 
+  variant = "default" 
+}) => {
+  const variants = {
+    default: "bg-gray-100 text-gray-900 hover:bg-gray-200/80",
+    secondary: "bg-gray-100 text-gray-900 hover:bg-gray-100/80",
+    destructive: "bg-red-100 text-red-900 hover:bg-red-100/80",
+    outline: "text-gray-900 border border-gray-200 hover:bg-gray-100",
   };
 
-  
+  return (
+    <div className={`
+      inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold
+      transition-colors focus:outline-none
+      ${variants[variant]}
+      ${className}
+    `}>
+      {children}
+    </div>
+  );
+};
+
+ 
+export {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Alert,
+  AlertTitle,
+  AlertDescription,
+  Button,
+  Input,
+  Modal,
+  Tooltip,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  TooltipProvider,
+  TooltipTrigger,
+  TooltipContent,
+  Badge,
+};

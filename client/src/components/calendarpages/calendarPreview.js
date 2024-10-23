@@ -1,149 +1,294 @@
-import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Clock, PlusCircle } from 'lucide-react';
-import { Button, Card, Modal, Tooltip } from '../custom-components/custom-components';
-import { Link } from 'react-router-dom';
+import React, { useState, useCallback } from 'react';
+import { ChevronLeft, ChevronRight, Clock, Calendar, Lock, Star, Sparkles } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../custom-components/custom-components";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "../custom-components/custom-components";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../custom-components/custom-components";
+import { Button } from "../custom-components/custom-components";
+import { Input } from "../custom-components/custom-components";
+import { Badge } from "../custom-components/custom-components";
+import { Alert, AlertTitle, AlertDescription } from "../custom-components/custom-components";
 
-// Month and Weekday Names
-const months = [
+const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
+  'July', 'August', 'September', 'October', 'November', 'December'
 ];
-const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+const PREVIEW_FEATURES = [
+  { icon: Calendar, title: "Advanced Calendar Views", description: "Daily, weekly, and monthly views with custom layouts" },
+  { icon: Star, title: "Smart Scheduling", description: "AI-powered scheduling suggestions and conflict resolution" },
+  { icon: Clock, title: "Time Zone Management", description: "Seamless scheduling across multiple time zones" },
+  { icon: Sparkles, title: "Custom Categories", description: "Organize events with custom colors and categories" }
+];
 
 const CalendarPreview = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [showModal, setShowModal] = useState(false);
-  const [tasks, setTasks] = useState([
-    { date: '2024-10-25', title: 'Midterm Exam', time: '10:00 AM' },
-    { date: '2024-10-30', title: 'Project Submission', time: '5:00 PM' },
-  ]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
+  const [interactionCount, setInteractionCount] = useState(0);
+  const [hasShownFeaturePrompt, setHasShownFeaturePrompt] = useState(false);
 
-  const handlePrevMonth = () => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() - 1)));
-  const handleNextMonth = () => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() + 1)));
+  // Demo events to showcase calendar capabilities
+  const events = [
+    { id: 1, title: 'Team Meeting', date: '2024-10-25', time: '10:00', priority: 'high' },
+    { id: 2, title: 'Project Review', date: '2024-10-25', time: '14:00', priority: 'medium' },
+    { id: 3, title: 'Client Call', date: '2024-10-30', time: '11:00', priority: 'high' },
+  ];
 
-  const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
-  const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
+  const navigateMonth = useCallback((direction) => {
+    setInteractionCount(prev => prev + 1);
+    setCurrentDate(prev => {
+      const newDate = new Date(prev);
+      newDate.setMonth(prev.getMonth() + direction);
+      return newDate;
+    });
 
-  const renderCalendarGrid = () => {
-    const cells = [];
-    // Empty cells for days before the 1st of the month
-    for (let i = 0; i < firstDayOfMonth; i++) {
-      cells.push(<div key={`empty-${i}`} className="empty-cell" />);
+    // Show sign-up prompt after a few interactions
+    if (interactionCount === 2 && !hasShownFeaturePrompt) {
+      setHasShownFeaturePrompt(true);
+      setIsSignUpModalOpen(true);
     }
-    // Calendar days with optional task previews
-    for (let day = 1; day <= daysInMonth; day++) {
-      const dateString = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-      const task = tasks.find((t) => t.date === dateString);
+  }, [interactionCount, hasShownFeaturePrompt]);
 
-      cells.push(
-        <Tooltip key={`day-${day}`} text={task ? `${task.title} at ${task.time}` : 'No Events'}>
-          <div
-            className={`calendar-cell ${task ? 'bg-blue-50 border-l-4 border-blue-500' : 'hover:bg-gray-100'} 
-            transition-all p-2 rounded`}
-          >
-            <span className={`day-number ${task ? 'text-blue-600 font-bold' : 'text-gray-900'}`}>
-              {day}
-            </span>
-            {task && (
-              <div className="text-sm text-blue-600 mt-1">
-                <Clock className="w-4 h-4 inline mr-1" />
-                {task.title}
-              </div>
-            )}
-          </div>
-        </Tooltip>
-      );
-    }
-    return cells;
+  const handleAddEventClick = () => {
+    setIsSignUpModalOpen(true);
   };
 
+  const getDaysInMonth = useCallback(() => {
+    return new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      0
+    ).getDate();
+  }, [currentDate]);
+
+  const getFirstDayOfMonth = useCallback(() => {
+    return new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      1
+    ).getDay();
+  }, [currentDate]);
+
+  const formatDateString = useCallback((day) => {
+    return `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  }, [currentDate]);
+
+  const renderCalendarDays = useCallback(() => {
+    const cells = [];
+    const firstDay = getFirstDayOfMonth();
+    const daysInMonth = getDaysInMonth();
+
+    // Empty cells for previous month
+    for (let i = 0; i < firstDay; i++) {
+      cells.push(
+        <div key={`empty-${i}`} className="h-24 bg-gray-50/50 rounded-lg" />
+      );
+    }
+
+    // Calendar days
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateString = formatDateString(day);
+      const dayEvents = events.filter(event => event.date === dateString);
+      const isToday = dateString === formatDateString(new Date().getDate());
+
+      cells.push(
+        <TooltipProvider key={dateString}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div
+                className={`h-24 p-2 rounded-lg transition-all border relative group
+                  ${isToday ? 'border-blue-500 bg-blue-50/50' : 'border-gray-100 hover:border-gray-200'}
+                  ${dayEvents.length ? 'cursor-pointer' : ''}`}
+                onClick={() => dayEvents.length && handleAddEventClick()}
+              >
+                <div className="flex justify-between items-start">
+                  <span className={`text-sm font-medium ${
+                    isToday ? 'text-blue-600' : 'text-gray-700'
+                  }`}>
+                    {day}
+                  </span>
+                  {dayEvents.length > 0 && (
+                    <Badge variant={dayEvents[0].priority === 'high' ? 'destructive' : 'secondary'}>
+                      {dayEvents.length}
+                    </Badge>
+                  )}
+                </div>
+                <div className="mt-1 space-y-1">
+                  {dayEvents.slice(0, 2).map(event => (
+                    <div
+                      key={event.id}
+                      className="text-xs p-1 rounded bg-white shadow-sm border border-gray-100"
+                    >
+                      <div className="font-medium truncate">{event.title}</div>
+                      <div className="text-gray-500 flex items-center">
+                        <Clock className="w-3 h-3 mr-1" />
+                        {event.time}
+                      </div>
+                    </div>
+                  ))}
+                  {dayEvents.length > 2 && (
+                    <div className="text-xs text-gray-500 pl-1">
+                      +{dayEvents.length - 2} more
+                    </div>
+                  )}
+                </div>
+                <div className="absolute inset-0 bg-white/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <Lock className="w-5 h-5 text-gray-400" />
+                </div>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <div className="p-2">
+                <div className="font-medium mb-1">
+                  {dayEvents.length ? `${dayEvents.length} events` : 'No events'}
+                </div>
+                <div className="text-sm text-gray-500">
+                  Sign up to view and manage events
+                </div>
+              </div>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
+    }
+
+    return cells;
+  }, [currentDate, events, formatDateString, getDaysInMonth, getFirstDayOfMonth]);
+
+  const SignUpModal = () => (
+    <Dialog open={isSignUpModalOpen} onOpenChange={setIsSignUpModalOpen}>
+      <DialogContent className="sm:max-w-[600px]">
+        <DialogHeader>
+          <DialogTitle className="text-2xl">Unlock Full Calendar Features</DialogTitle>
+          <DialogDescription>
+            Sign up now to access all premium features and start managing your schedule like a pro.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-6 py-4">
+          <div className="grid grid-cols-2 gap-4">
+            {PREVIEW_FEATURES.map((feature, index) => (
+              <div key={index} className="p-4 rounded-lg border bg-gray-50">
+                <feature.icon className="w-6 h-6 text-blue-500 mb-2" />
+                <h3 className="font-medium mb-1">{feature.title}</h3>
+                <p className="text-sm text-gray-600">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+          <Alert>
+            <AlertTitle className="flex items-center gap-2">
+              <Star className="w-4 h-4" />
+              Special Launch Offer
+            </AlertTitle>
+            <AlertDescription>
+              Sign up today and get 3 months free premium access!
+            </AlertDescription>
+          </Alert>
+          <div className="flex flex-col gap-4">
+            <Button
+              className="w-full bg-blue-600 hover:bg-blue-700"
+              onClick={() => window.location.href = '/signup'}
+            >
+              Sign Up Now
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => setIsSignUpModalOpen(false)}
+            >
+              Continue Previewing
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+
   return (
-    <div className="p-8 bg-gradient-to-r from-purple-50 via-blue-50 to-indigo-100 min-h-screen">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
+    <div className="p-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+      <div className="max-w-6xl mx-auto">
+        <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-indigo-800">Calendar Preview</h1>
-            <p className="text-gray-600">
-              Explore your events and deadlines. Sign up for personalized schedules and reminders!
+            <h1 className="text-4xl font-bold text-gray-900">Calendar Preview</h1>
+            <p className="text-gray-600 mt-2">
+              Experience our powerful calendar features
             </p>
           </div>
           <div className="flex gap-4">
-            <Button className="bg-purple-600 hover:bg-purple-700" onClick={() => setShowModal(true)}>
-              <PlusCircle className="w-5 h-5 mr-1" /> Add Event
+            <Button
+              variant="outline"
+              onClick={handleAddEventClick}
+              className="flex items-center gap-2"
+            >
+              <Calendar className="w-4 h-4" />
+              Add Event
             </Button>
-            <Link to="/signup" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500">
-              Sign Up for Full Access
-            </Link>
+            <Button
+              className="flex items-center gap-2"
+              onClick={() => setIsSignUpModalOpen(true)}
+            >
+              <Star className="w-4 h-4" />
+              Sign Up Now
+            </Button>
           </div>
         </div>
 
-        <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
-          <div className="flex justify-between items-center mb-4">
-            <Button variant="ghost" onClick={handlePrevMonth}>
-              <ChevronLeft className="w-5 h-5" /> {months[(currentDate.getMonth() - 1 + 12) % 12]}
-            </Button>
-            <h2 className="text-xl font-semibold">
-              {months[currentDate.getMonth()]} {currentDate.getFullYear()}
-            </h2>
-            <Button variant="ghost" onClick={handleNextMonth}>
-              {months[(currentDate.getMonth() + 1) % 12]} <ChevronRight className="w-5 h-5" />
-            </Button>
-          </div>
-
-          <div className="grid grid-cols-7 gap-2 text-center font-semibold text-gray-600 mb-2">
-            {weekdays.map((day) => (
-              <div key={day}>{day}</div>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-7 gap-2">
-            {renderCalendarGrid()}
-          </div>
-        </div>
-
-        <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
-          <h2 className="text-xl font-semibold">Upcoming Events</h2>
-          <ul className="mt-4">
-            {tasks.map((task, index) => (
-              <li key={index} className="flex items-center justify-between border-b py-2">
-                <div>
-                  <h3 className="font-semibold">{task.title}</h3>
-                  <span className="text-gray-600">{task.date} at {task.time}</span>
+        <Card>
+          <CardHeader className="pb-4">
+            <div className="flex justify-between items-center">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigateMonth(-1)}
+              >
+                <ChevronLeft className="w-4 h-4 mr-1" />
+                {MONTHS[(currentDate.getMonth() - 1 + 12) % 12]}
+              </Button>
+              <CardTitle className="text-xl">
+                {MONTHS[currentDate.getMonth()]} {currentDate.getFullYear()}
+              </CardTitle>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigateMonth(1)}
+              >
+                {MONTHS[(currentDate.getMonth() + 1) % 12]}
+                <ChevronRight className="w-4 h-4 ml-1" />
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-7 gap-4 mb-4">
+              {WEEKDAYS.map(day => (
+                <div key={day} className="text-sm font-medium text-gray-600 text-center">
+                  {day}
                 </div>
-                <Button variant="ghost" className="text-red-500">Delete</Button>
-              </li>
-            ))}
-          </ul>
-        </div>
+              ))}
+            </div>
+            <div className="grid grid-cols-7 gap-4">
+              {renderCalendarDays()}
+            </div>
+          </CardContent>
+        </Card>
 
-        <div className="bg-white shadow-lg rounded-lg p-6">
-          <h2 className="text-xl font-semibold">Important Dates</h2>
-          <ul className="mt-4">
-            <li className="flex justify-between py-2">
-              <span>John's Birthday</span>
-              <span className="text-gray-600">October 15</span>
-            </li>
-            <li className="flex justify-between py-2">
-              <span>Project Due Date</span>
-              <span className="text-gray-600">November 1</span>
-            </li>
-            {/* Add more important dates as necessary */}
-          </ul>
-        </div>
-
-        {showModal && (
-          <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-            <h2 className="text-xl font-semibold mb-4">Add Event</h2>
-            <input type="text" placeholder="Event Title" className="border p-2 w-full mb-4 rounded" />
-            <input type="datetime-local" className="border p-2 w-full mb-4 rounded" />
-            <Button onClick={() => {
-              // Logic to add a new task
-              setShowModal(false);
-            }} className="bg-blue-600">
-              Save Event
-            </Button>
-          </Modal>
-        )}
+        <SignUpModal />
       </div>
     </div>
   );
