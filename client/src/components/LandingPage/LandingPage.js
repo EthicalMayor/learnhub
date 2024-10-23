@@ -54,7 +54,7 @@ const LandingPage = () => {
       subtitle: "Exclusively on LearnHub",
       image: videoConferencing
     },
-    { title: "Create and Share Documents Easily ", 
+    { title: "Join a Geng and Send Invites", 
       subtitle: "Learning is more fun with Learnhub",
       image: gengs
     },
