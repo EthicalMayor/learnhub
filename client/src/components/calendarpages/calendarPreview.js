@@ -77,7 +77,7 @@ const CalendarPreview = () => {
           </div>
         </div>
 
-        <div className="bg-white shadow-lg rounded-lg p-6">
+        <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
           <div className="flex justify-between items-center mb-4">
             <Button variant="ghost" onClick={handlePrevMonth}>
               <ChevronLeft className="w-5 h-5" /> {months[(currentDate.getMonth() - 1 + 12) % 12]}
@@ -99,6 +99,36 @@ const CalendarPreview = () => {
           <div className="grid grid-cols-7 gap-2">
             {renderCalendarGrid()}
           </div>
+        </div>
+
+        <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
+          <h2 className="text-xl font-semibold">Upcoming Events</h2>
+          <ul className="mt-4">
+            {tasks.map((task, index) => (
+              <li key={index} className="flex items-center justify-between border-b py-2">
+                <div>
+                  <h3 className="font-semibold">{task.title}</h3>
+                  <span className="text-gray-600">{task.date} at {task.time}</span>
+                </div>
+                <Button variant="ghost" className="text-red-500">Delete</Button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="bg-white shadow-lg rounded-lg p-6">
+          <h2 className="text-xl font-semibold">Important Dates</h2>
+          <ul className="mt-4">
+            <li className="flex justify-between py-2">
+              <span>John's Birthday</span>
+              <span className="text-gray-600">October 15</span>
+            </li>
+            <li className="flex justify-between py-2">
+              <span>Project Due Date</span>
+              <span className="text-gray-600">November 1</span>
+            </li>
+            {/* Add more important dates as necessary */}
+          </ul>
         </div>
 
         {showModal && (
