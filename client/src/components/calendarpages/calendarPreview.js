@@ -7,6 +7,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "../custom-components/custom-components";
 import { Badge } from "../custom-components/custom-components";
 
+
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+
 const CalendarPreview = ({ events }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
