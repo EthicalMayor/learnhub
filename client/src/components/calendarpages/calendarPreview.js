@@ -71,7 +71,7 @@ const CalendarPreview = () => {
     // Empty cells for previous month
     for (let i = 0; i < firstDay; i++) {
       cells.push(
-        <div key={`empty-${i}`} className="h-24 bg-gray-50/50 rounded-lg" />
+        <div key={`empty-${i}`} className="h-24 bg-gray-800 rounded-lg" />
       );
     }
 
@@ -85,12 +85,12 @@ const CalendarPreview = () => {
         <div
           key={dateString}
           className={`h-24 p-2 rounded-lg transition-all border
-            ${isToday ? 'border-blue-500 bg-blue-50/50' : 'border-gray-100 hover:border-gray-200'}
+            ${isToday ? 'border-blue-500 bg-gray-800' : 'border-gray-700 hover:border-gray-600 bg-gray-800'}
             ${dayEvents.length ? 'cursor-pointer' : ''}`}
         >
           <div className="flex justify-between items-start">
             <span className={`text-sm font-medium ${
-              isToday ? 'text-blue-600' : 'text-gray-700'
+              isToday ? 'text-blue-400' : 'text-gray-100'
             }`}>
               {day}
             </span>
@@ -104,10 +104,10 @@ const CalendarPreview = () => {
             {dayEvents.map(event => (
               <div
                 key={event.id}
-                className="text-xs p-1 rounded bg-white shadow-sm border border-gray-100"
+                className="text-xs p-1 rounded bg-gray-700 shadow-sm border border-gray-600"
               >
-                <div className="font-medium truncate">{event.title}</div>
-                <div className="text-gray-500 flex items-center">
+                <div className="font-medium truncate text-gray-100">{event.title}</div>
+                <div className="text-gray-400 flex items-center">
                   <Clock className="w-3 h-3 mr-1" />
                   {event.time}
                 </div>
@@ -122,44 +122,53 @@ const CalendarPreview = () => {
   }, [currentDate, events, formatDateString, getDaysInMonth, getFirstDayOfMonth]);
 
   return (
-    <div className="p-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <div className="p-8 bg-black min-h-screen">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900">Calendar</h1>
-            <p className="text-gray-600 mt-2">
+            <h1 className="text-4xl font-bold text-white">Calendar</h1>
+            <p className="text-gray-400 mt-2">
               Manage your schedule
             </p>
           </div>
           <div className="flex gap-4">
             <Button
               variant="outline"
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 text-white border-gray-700 hover:bg-gray-800"
             >
               <Calendar className="w-4 h-4" />
               Add Event
             </Button>
+            <Button
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
+              onClick={() => setIsSignUpModalOpen(true)}
+            >
+              <Star className="w-4 h-4" />
+              Sign Up
+            </Button>
           </div>
         </div>
 
-        <Card>
+        <Card className="bg-gray-900 border-gray-700">
           <CardHeader className="pb-4">
             <div className="flex justify-between items-center">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigateMonth(-1)}
+                className="text-gray-100 hover:text-white hover:bg-gray-800"
               >
                 <ChevronLeft className="w-4 h-4 mr-1" />
                 {MONTHS[(currentDate.getMonth() - 1 + 12) % 12]}
               </Button>
-              <CardTitle className="text-xl">
+              <CardTitle className="text-xl text-white">
                 {MONTHS[currentDate.getMonth()]} {currentDate.getFullYear()}
               </CardTitle>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigateMonth(1)}
+                className="text-gray-100 hover:text-white hover:bg-gray-800"
               >
                 {MONTHS[(currentDate.getMonth() + 1) % 12]}
                 <ChevronRight className="w-4 h-4 ml-1" />
@@ -169,7 +178,7 @@ const CalendarPreview = () => {
           <CardContent>
             <div className="grid grid-cols-7 gap-4 mb-4">
               {WEEKDAYS.map(day => (
-                <div key={day} className="text-sm font-medium text-gray-600 text-center">
+                <div key={day} className="text-sm font-medium text-gray-400 text-center">
                   {day}
                 </div>
               ))}
