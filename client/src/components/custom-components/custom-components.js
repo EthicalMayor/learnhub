@@ -251,8 +251,82 @@ const Badge = ({
     </div>
   );
 };
+// Dropdown Menu Components
+const DropdownMenu = ({ children }) => (
+  <div className="relative inline-block text-left">
+    {children}
+  </div>
+);
 
- 
+const DropdownMenuTrigger = ({ 
+  children, 
+  asChild = false,
+  className = "",
+  ...props 
+}) => {
+  const Component = asChild ? 'div' : 'button';
+  return (
+    <Component
+      className={`inline-flex items-center justify-center ${className}`}
+      {...props}
+    >
+      {children}
+    </Component>
+  );
+};
+
+const DropdownMenuContent = ({ 
+  children, 
+  className = "",
+  align = "center",
+  ...props 
+}) => {
+  const alignmentStyles = {
+    start: "left-0",
+    center: "left-1/2 -translate-x-1/2",
+    end: "right-0"
+  };
+
+  return (
+    <div
+      className={`
+        absolute z-50 mt-2 min-w-[8rem] overflow-hidden
+        rounded-md border border-gray-200 bg-white p-1
+        shadow-md animate-in fade-in-0 zoom-in-95
+        dark:border-gray-800 dark:bg-gray-950
+        ${alignmentStyles[align]}
+        ${className}
+      `}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+};
+
+const DropdownMenuItem = ({ 
+  children, 
+  className = "",
+  disabled = false,
+  ...props 
+}) => (
+  <button
+    className={`
+      relative flex w-full cursor-pointer select-none items-center
+      rounded-sm px-2 py-1.5 text-sm outline-none
+      transition-colors
+      focus:bg-gray-100 focus:text-gray-900
+      disabled:pointer-events-none disabled:opacity-50
+      dark:focus:bg-gray-800 dark:focus:text-gray-50
+      ${className}
+    `}
+    disabled={disabled}
+    {...props}
+  >
+    {children}
+  </button>
+);
+
 export {
   Card,
   CardHeader,
@@ -274,4 +348,8 @@ export {
   TooltipTrigger,
   TooltipContent,
   Badge,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
 };
