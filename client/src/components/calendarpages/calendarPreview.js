@@ -8,8 +8,6 @@ import { Button } from "../custom-components/custom-components";
 import { Badge } from "../custom-components/custom-components";
 
 
-const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 
 const CalendarPreview = ({ events }) => {
@@ -17,6 +15,9 @@ const CalendarPreview = ({ events }) => {
   const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
+  const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  
   const handleEventClick = (events) => {
     const requiresSignUp = events.some((event) => event.requiresSignUp);
     if (requiresSignUp) {
