@@ -32,7 +32,7 @@ const CalendarPreview = () => {
   const events = [
     { id: 1, title: 'Team Meeting', date: '2024-10-25', time: '10:00', priority: 'high' },
     { id: 2, title: 'Project Review', date: '2024-10-25', time: '14:00', priority: 'medium' },
-    { id: 3, title: 'Client Call', date: '2024-10-30', time: '11:00', priority: 'high' },
+    { id: 3, title: 'Class Video Call', date: '2024-10-30', time: '11:00', priority: 'high' },
   ];
 
   const navigateMonth = useCallback((direction) => {
@@ -122,19 +122,19 @@ const CalendarPreview = () => {
   }, [currentDate, events, formatDateString, getDaysInMonth, getFirstDayOfMonth]);
 
   return (
-    <div className="p-8 bg-black min-h-screen">
+    <div className="p-8 bg-white min-h-screen">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-white">Calendar</h1>
-            <p className="text-gray-400 mt-2">
+            <h1 className="text-4xl font-bold text-gray-600">Calendar</h1>
+            <p className="text-gray-500 mt-2">
               Manage your schedule
             </p>
           </div>
           <div className="flex gap-4">
             <Button
               variant="outline"
-              className="flex items-center gap-2 text-white border-gray-700 hover:bg-gray-800"
+              className="flex items-center gap-2 text-black border-gray-700 hover:bg-gray-800"
             >
               <Calendar className="w-4 h-4" />
               Add Event
