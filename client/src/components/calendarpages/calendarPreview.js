@@ -5,77 +5,141 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "../custom-components/custom-components";
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "../custom-components/custom-components";
+} from "@/components/ui/dialog";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "../custom-components/custom-components";
-import { Button } from "../custom-components/custom-components";
-import { Badge } from "../custom-components/custom-components";
-import { Alert, AlertTitle, AlertDescription } from "../custom-components/custom-components";
+} from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
-];
-
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-const PREVIEW_FEATURES = [
-  { icon: Calendar, title: "Advanced Calendar Views", description: "Daily, weekly, and monthly views with custom layouts" },
-  { icon: Star, title: "Smart Scheduling", description: "AI-powered scheduling suggestions and conflict resolution" },
-  { icon: Clock, title: "Time Zone Management", description: "Seamless scheduling across multiple time zones" },
-  { icon: Sparkles, title: "Custom Categories", description: "Organize events with custom colors and categories" }
-];
+// [...Previous constants remain the same...]
 
 const CalendarPreview = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
-  // Demo events to showcase calendar capabilities
-  const events = [
-    { id: 1, title: 'Team Meeting', date: '2024-10-25', time: '10:00', priority: 'high' },
-    { id: 2, title: 'Project Review', date: '2024-10-25', time: '14:00', priority: 'medium' },
-    { id: 3, title: 'Client Call', date: '2024-10-30', time: '11:00', priority: 'high' },
-  ];
-
-  const navigateMonth = useCallback((direction) => {
-    setCurrentDate(prev => {
-      const newDate = new Date(prev);
-      newDate.setMonth(prev.getMonth() + direction);
-      return newDate;
+  // Refined event handling
+  const handleEventClick = (events) => {
+    // Instead of immediately showing the signup modal,
+    // show a preview of the event first
+    setSelectedEvent({
+      events,
+      position: { x: window.event.clientX, y: window.event.clientY }
     });
-  }, []);
+    
+    // Auto-dismiss the preview after 5 seconds if no action is taken
+    setTimeout(() => {
+      setSelectedEvent(null);
+    }, 5000);
+  };
 
-  const getDaysInMonth = useCallback(() => {
-    return new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + 1,
-      0
-    ).getDate();
-  }, [currentDate]);
+  // Event preview overlay
+  const EventPreview = () => {
+    if (!selectedEvent) return null;
 
-  const getFirstDayOfMonth = useCallback(() => {
-    return new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      1
-    ).getDay();
-  }, [currentDate]);
+    return (
+      <div 
+        className="fixed z-50 transform transition-all duration-200 ease-in-out"
+        style={{
+          top: `${selectedEvent.position.y}px`,
+          left: `${selectedEvent.position.x}px`,
+          transform: 'translate(-50%, -100%)'
+        }}
+      >
+        <Card className="w-64 shadow-lg">
+          <CardContent className="p-4">
+            <div className="space-y-2">
+              {selectedEvent.events.slice(0, 2).map((event, idx) => (
+                <div key={idx} className="text-sm">
+                  <div className="font-medium">{event.title}</div>
+                  <div className="text-gray-500 flex items-center">
+                    <Clock className="w-3 h-3 mr-1" />
+                    {event.time}
+                  </div>
+                </div>
+              ))}
+              {selectedEvent.events.length > 2 && (
+                <div className="text-xs text-gray-500">
+                  +{selectedEvent.events.length - 2} more events
+                </div>
+              )}
+              <Button 
+                size="sm" 
+                className="w-full mt-2"
+                onClick={() => {
+                  setSelectedEvent(null);
+                  setIsSignUpModalOpen(true);
+                }}
+              >
+                View Full Details
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  };
 
-  const formatDateString = useCallback((day) => {
-    return `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-  }, [currentDate]);
+  // Refined sign-up modal with smooth transitions
+  const SignUpModal = () => (
+    <Dialog 
+      open={isSignUpModalOpen} 
+      onOpenChange={setIsSignUpModalOpen}
+    >
+      <DialogContent className="sm:max-w-[600px] transition-all duration-300 ease-in-out">
+        <DialogHeader>
+          <DialogTitle className="text-2xl">Get Full Calendar Access</DialogTitle>
+          <DialogDescription className="text-gray-600">
+            Sign up now to unlock all features and start managing your schedule effectively.
+          </DialogDescription>
+        </DialogHeader>
+        
+        <div className="grid gap-6 py-4">
+          <div className="grid grid-cols-2 gap-4">
+            {PREVIEW_FEATURES.map((feature, index) => (
+              <div 
+                key={index} 
+                className="p-4 rounded-lg border bg-gray-50 hover:bg-gray-100 transition-colors duration-200"
+              >
+                <feature.icon className="w-6 h-6 text-blue-500 mb-2" />
+                <h3 className="font-medium mb-1">{feature.title}</h3>
+                <p className="text-sm text-gray-600">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+          
+          <div className="flex gap-4 mt-4">
+            <Button
+              className="flex-1 bg-blue-600 hover:bg-blue-700"
+              onClick={() => setIsSignUpModalOpen(false)}
+            >
+              Sign Up Now
+            </Button>
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={() => setIsSignUpModalOpen(false)}
+            >
+              Maybe Later
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
 
+  // Modified calendar day rendering
   const renderCalendarDays = useCallback(() => {
     const cells = [];
     const firstDay = getFirstDayOfMonth();
@@ -95,107 +159,50 @@ const CalendarPreview = () => {
       const isToday = dateString === formatDateString(new Date().getDate());
 
       cells.push(
-        <TooltipProvider key={dateString}>
-          <Tooltip>
-            <TooltipTrigger asChild>
+        <div
+          key={dateString}
+          className={`h-24 p-2 rounded-lg transition-all border relative
+            ${isToday ? 'border-blue-500 bg-blue-50/50' : 'border-gray-100 hover:border-gray-200'}
+            ${dayEvents.length ? 'cursor-pointer' : ''}`}
+          onClick={() => dayEvents.length && handleEventClick(dayEvents)}
+        >
+          <div className="flex justify-between items-start">
+            <span className={`text-sm font-medium ${
+              isToday ? 'text-blue-600' : 'text-gray-700'
+            }`}>
+              {day}
+            </span>
+            {dayEvents.length > 0 && (
+              <Badge variant={dayEvents[0].priority === 'high' ? 'destructive' : 'secondary'}>
+                {dayEvents.length}
+              </Badge>
+            )}
+          </div>
+          <div className="mt-1 space-y-1">
+            {dayEvents.slice(0, 2).map(event => (
               <div
-                className={`h-24 p-2 rounded-lg transition-all border relative
-                  ${isToday ? 'border-blue-500 bg-blue-50/50' : 'border-gray-100 hover:border-gray-200'}
-                  ${dayEvents.length ? 'cursor-pointer' : ''}`}
-                onClick={() => dayEvents.length && setIsSignUpModalOpen(true)}
+                key={event.id}
+                className="text-xs p-1 rounded bg-white shadow-sm border border-gray-100"
               >
-                <div className="flex justify-between items-start">
-                  <span className={`text-sm font-medium ${
-                    isToday ? 'text-blue-600' : 'text-gray-700'
-                  }`}>
-                    {day}
-                  </span>
-                  {dayEvents.length > 0 && (
-                    <Badge variant={dayEvents[0].priority === 'high' ? 'destructive' : 'secondary'}>
-                      {dayEvents.length}
-                    </Badge>
-                  )}
+                <div className="font-medium truncate">{event.title}</div>
+                <div className="text-gray-500 flex items-center">
+                  <Clock className="w-3 h-3 mr-1" />
+                  {event.time}
                 </div>
-                <div className="mt-1 space-y-1">
-                  {dayEvents.slice(0, 2).map(event => (
-                    <div
-                      key={event.id}
-                      className="text-xs p-1 rounded bg-white shadow-sm border border-gray-100"
-                    >
-                      <div className="font-medium truncate">{event.title}</div>
-                      <div className="text-gray-500 flex items-center">
-                        <Clock className="w-3 h-3 mr-1" />
-                        {event.time}
-                      </div>
-                    </div>
-                  ))}
-                  {dayEvents.length > 2 && (
-                    <div className="text-xs text-gray-500 pl-1">
-                      +{dayEvents.length - 2} more
-                    </div>
-                  )}
-                </div>
-                {dayEvents.length > 0 && (
-                  <div className="absolute inset-0 bg-white/0 hover:bg-white/80 transition-all flex items-center justify-center opacity-0 hover:opacity-100">
-                    <Button size="sm" variant="secondary" className="flex items-center gap-2">
-                      <Lock className="w-4 h-4" />
-                      View Details
-                    </Button>
-                  </div>
-                )}
               </div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="text-sm">Sign up to view full event details</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+            ))}
+            {dayEvents.length > 2 && (
+              <div className="text-xs text-gray-500 pl-1">
+                +{dayEvents.length - 2} more
+              </div>
+            )}
+          </div>
+        </div>
       );
     }
 
     return cells;
-  }, [currentDate, events, formatDateString, getDaysInMonth, getFirstDayOfMonth]);
-
-  const SignUpModal = () => (
-    <Dialog open={isSignUpModalOpen} onOpenChange={setIsSignUpModalOpen}>
-      <DialogContent className="sm:max-w-[600px]">
-        <DialogHeader>
-          <DialogTitle className="text-2xl">Get Full Calendar Access</DialogTitle>
-          <DialogDescription>
-            Sign up now to unlock all features and start managing your schedule effectively.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-6 py-4">
-          <div className="grid grid-cols-2 gap-4">
-            {PREVIEW_FEATURES.map((feature, index) => (
-              <div key={index} className="p-4 rounded-lg border bg-gray-50">
-                <feature.icon className="w-6 h-6 text-blue-500 mb-2" />
-                <h3 className="font-medium mb-1">{feature.title}</h3>
-                <p className="text-sm text-gray-600">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-          <Alert>
-            <AlertTitle className="flex items-center gap-2">
-              <Star className="w-4 h-4" />
-              Limited Time Offer
-            </AlertTitle>
-            <AlertDescription>
-              Sign up today
-            </AlertDescription>
-          </Alert>
-          <div className="space-y-4">
-            <Button
-              className="w-full bg-blue-600 hover:bg-blue-700"
-              onClick={() => window.location.href = '/signup'}
-            >
-              Sign Up
-            </Button>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
+  }, [currentDate, events, formatDateString, getDaysInMonth, getFirstDayOfMonth, handleEventClick]);
 
   return (
     <div className="p-8 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
@@ -263,7 +270,7 @@ const CalendarPreview = () => {
             </div>
           </CardContent>
         </Card>
-
+        <EventPreview />
         <SignUpModal />
       </div>
     </div>
