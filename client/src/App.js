@@ -14,6 +14,7 @@ import Document from './components/documents/document';
 import ResourceVaultPreview from './components/resource-vault/resource-vault';
 import VideoConferencingPreview from './components/videoConferencing/videoConferencing';
 import TaskPreview from './components/taskPages/taskPreview';
+import CalendarPreview from './components/calendarpages/calendarPreview';
 
 // Your firebaseConfig object should be defined here
 const firebaseConfig = {
@@ -45,6 +46,7 @@ const App = () => {
               <Route path="/resource" element={<ResourceVaultPreview />} />
               <Route path="/video-conferencing" element={<VideoConferencingPreview />} />
               <Route path="/task" element={<TaskPreview />} />
+              <Route path="/calendar" element={<CalendarPreview />} />
             </Routes>
           </Router>
         </GoogleOAuthProvider>

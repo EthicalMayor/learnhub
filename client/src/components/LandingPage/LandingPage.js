@@ -445,26 +445,26 @@ return (
                   { title: 'Video Conferencing', path: '/video-conferencing', icon: faComments },
                   { title: 'Chats', path: '/chat', icon: faComments },
                   { title: 'Tasks', path: '/task', icon: faCheckSquare },
-                  { title: 'Calendars', path: '/signup', icon: faCalendar },
+                  { title: 'Calendars', path: '/calendar', icon: faCalendar },
                 ]}
               />
               <NavDropdown 
                 title="Colleges" 
                 items={[
-                  { title: 'College News', path: '/signup', icon: faNewspaper },
-                  { title: 'Career Hunt', path: '/signup', icon: faBriefcase },
+                  { title: 'College News', path: '/college-news', icon: faNewspaper },
+                  { title: 'Career Hunt', path: '/career-hunt', icon: faBriefcase },
                 ]} />
               <NavDropdown 
                 title="Gengs" 
                 items={[
-                  { title: 'The Geng', path: '/signup', icon: faUsers },
-                  { title: 'Join the Geng', path: '/signup', icon: faUserPlus },
+                  { title: 'The Geng', path: '/the-geng', icon: faUsers },
+                  { title: 'Join the Geng', path: '/join-the-geng', icon: faUserPlus },
                 ]} 
               />
             </div>
 
             <div className="flex items-center space-x-4 ml-auto">
-              <Link to="/signup" className="text-black text-xs font-bold hover:text-gray-600 transition duration-300">Request a Demo</Link>
+              <Link to="/request-a-demo" className="text-black text-xs font-bold hover:text-gray-600 transition duration-300">Request a Demo</Link>
               <span className="text-gray-500 text-xs font-bold">|</span>
               <Link to="/login" className="text-black text-xs font-bold hover:text-gray-600 transition duration-300">Login</Link>
               <Link to="/signup" className="bg-blue-600 hover:bg-blue-700 text-white rounded-full py-2 px-4 text-xs font-bold transition duration-300">Get LearnHub Free</Link>
@@ -484,21 +484,21 @@ return (
                   { title: 'Video Conferencing', path: '/video-conferencing' },
                   { title: 'Chats', path: '/chat' },
                   { title: 'Tasks', path: '/task' },
-                  { title: 'Calendars', path: '/signup' },
+                  { title: 'Calendars', path: '/calendar' },
                 ]}  
               />
         <MobileNavItem 
           title="Colleges" 
           items={[
-            { title: 'College News', path: '/signup' },
-            { title: 'Career Hunt', path: '/signup' },
+            { title: 'College News', path: '/college-news' },
+            { title: 'Career Hunt', path: '/career-hunt' },
           ]}            
         />
         <MobileNavItem 
           title="Gengs" 
           items={[
-            { title: 'The Geng', path: '/signup' },
-            { title: 'Join the Geng', path: '/signup' },
+            { title: 'The Geng', path: '/the-geng' },
+            { title: 'Join the Geng', path: '/join-the-geng' },
           ]} 
         />
         <div className="mt-4 space-y-2">
