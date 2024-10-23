@@ -8,7 +8,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import LandingPage from './components/LandingPage/LandingPage';
 import LoginPage from './components/loginPage/LoginPage';
 import SignUpPage from './components/signuppages/SignUpPage';
-import ChatPage from './components/chatpages/chatpage';
+import ChatPreview from './components/chatpages/chatpage';
 import Dashboard from './components/dashboardpages/dashboard';
 import Document from './components/documents/document';
 import ResourceVaultPreview from './components/resource-vault/resource-vault';
@@ -37,7 +37,7 @@ const App = () => {
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignUpPage />} />
-              <Route path="/chat" element={<ChatPage />} />
+              <Route path="/chat" element={<ChatPreview />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/document" element={<Document />} />
               <Route path="/resource" element={<ResourceVaultPreview />} />
