@@ -12,6 +12,7 @@ import ChatPreview from './components/chatpages/chatpage';
 import Dashboard from './components/dashboardpages/dashboard';
 import Document from './components/documents/document';
 import ResourceVaultPreview from './components/resource-vault/resource-vault';
+import VideoConferencingPreview from './components/videoConferencing/videoConferencing';
 
 // Your firebaseConfig object should be defined here
 const firebaseConfig = {
@@ -41,6 +42,7 @@ const App = () => {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/document" element={<Document />} />
               <Route path="/resource" element={<ResourceVaultPreview />} />
+              <Route path="/video-conferencing" element={<VideoConferencingPreview />} />
             </Routes>
           </Router>
         </GoogleOAuthProvider>

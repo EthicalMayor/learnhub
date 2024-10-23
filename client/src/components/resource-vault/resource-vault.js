@@ -1,6 +1,6 @@
 import React from 'react';
 import { Book, BookOpen, Video, FileText, Download, Search, Grid, List, Clock, Star } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent, Alert, AlertTitle, AlertDescription, Button, Input } from '@/components/ui/alert';
+import { Card, CardHeader, CardTitle, CardContent, Alert, AlertTitle, AlertDescription, Button, Input } from '../custom-components/custom-components';
 import { Link } from 'react-router-dom';
 
 const ResourceVaultPreview = () => {
