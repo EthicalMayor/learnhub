@@ -37,6 +37,30 @@ const CalendarPreview = () => {
     }
   };
 
+  const getFirstDayOfMonth = () => {
+    return new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
+  };
+
+  const getDaysInMonth = () => {
+    return new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+  };
+
+  const formatDateString = (day) => {
+    const month = currentDate.getMonth() + 1; // Months are zero-indexed
+    return `${currentDate.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+  };
+
+  const navigateMonth = (direction) => {
+    setCurrentDate(prevDate => {
+      const newDate = new Date(prevDate);
+      newDate.setMonth(newDate.getMonth() + direction);
+      return newDate;
+    });
+  };
+
+  const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
   // Event preview overlay
   const EventPreview = () => {
     if (!selectedEvent) return null;
