@@ -5,22 +5,22 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "../custom-components/custom-components";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "@/components/ui/dialog";
+} from "../custom-components/custom-components";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+} from "../custom-components/custom-components";
+import { Button } from "../custom-components/custom-components";
+import { Badge } from "../custom-components/custom-components";
 
 // [...Previous constants remain the same...]
 
