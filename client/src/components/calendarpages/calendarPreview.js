@@ -56,6 +56,7 @@ const CalendarPreview = () => {
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [isAddEventOpen, setIsAddEventOpen] = useState(false);
+  const [showSignupPrompt, setShowSignupPrompt] = useState(false);
   const [newEvent, setNewEvent] = useState({
     title: '',
     date: '',
@@ -63,140 +64,123 @@ const CalendarPreview = () => {
     description: ''
   });
 
-  // Filter events based on search and type
-  useEffect(() => {
-    let filtered = [...events];
-    
-    // Apply search filter
-    if (searchQuery) {
-      filtered = filtered.filter(event => 
-        event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        event.description?.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    // Apply type filter
-    if (selectedFilter !== 'all') {
-      filtered = filtered.filter(event => event.type === selectedFilter);
-    }
-
-    setFilteredEvents(filtered);
-  }, [events, searchQuery, selectedFilter]);
-
-  const addEvent = () => {
-    if (newEvent.title && newEvent.date) {
-      setEvents(prev => [...prev, { ...newEvent, id: Date.now() }]);
-      setNewEvent({
-        title: '',
-        date: '',
-        type: EVENT_TYPES.OTHER,
-        description: ''
-      });
-      setIsAddEventOpen(false);
-    }
-  };
-
-  const deleteEvent = (eventId) => {
-    setEvents(prev => prev.filter(event => event.id !== eventId));
-  };
-
-  const navigateDate = (direction) => {
-    setCurrentDate(prevDate => {
-      const newDate = new Date(prevDate);
-      if (view === ViewOptions.MONTH) {
-        newDate.setMonth(newDate.getMonth() + direction);
-      } else if (view === ViewOptions.WEEK) {
-        newDate.setDate(newDate.getDate() + direction * 7);
-      } else {
-        newDate.setDate(newDate.getDate() + direction);
-      }
-      return newDate;
-    });
-  };
-
-  const goToToday = () => {
-    setCurrentDate(new Date());
-  };
-
-  const renderCalendarDays = useCallback(() => {
-    const cells = [];
-    const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    const startingDayOfWeek = firstDayOfMonth.getDay();
-    const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+  // Limit preview to only show current week plus one
+  const isDateInPreviewRange = (date) => {
     const today = new Date();
+    const twoWeeksFromNow = new Date(today);
+    twoWeeksFromNow.setDate(today.getDate() + 14);
+    return date <= twoWeeksFromNow;
+  };
+   // Modified addEvent to show signup prompt after 2 events
+   const addEvent = () => {
+    if (events.length >= 2) {
+      setShowSignupPrompt(true);
+      setIsAddEventOpen(false);
+      return;
+    }
+
+    if (newEvent.title && newEvent.date) {
+        setEvents(prev => [...prev, { ...newEvent, id: Date.now() }]);
+        setNewEvent({
+          title: '',
+          date: '',
+          type: EVENT_TYPES.OTHER,
+          description: ''
+        });
+        setIsAddEventOpen(false);
+      }
+    };
+  
+  
+    const renderCalendarDays = useCallback(() => {
+        const cells = [];
+        const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        const startingDayOfWeek = firstDayOfMonth.getDay();
+        const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+        const today = new Date();
+        
+        const adjustedStartDay = startingDayOfWeek === 0 ? 6 : startingDayOfWeek - 1;
     
-    const adjustedStartDay = startingDayOfWeek === 0 ? 6 : startingDayOfWeek - 1;
-
-    // Previous month's days
-    for (let i = 0; i < adjustedStartDay; i++) {
-      const prevMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0 - (adjustedStartDay - i - 1));
-      cells.push(
-        <div key={`prev-${i}`} className="min-h-[120px] p-2 bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700">
-          <span className="text-gray-400 text-sm">{prevMonthDate.getDate()}</span>
-        </div>
-      );
-    }
-
-    // Current month's days
-    for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-      const isToday = date.toDateString() === today.toDateString();
-      const dateString = date.toISOString().split('T')[0];
-      const dayEvents = filteredEvents.filter(event => event.date === dateString);
-
-      cells.push(
-        <div 
-          key={dateString}
-          className={`min-h-[120px] p-2 border border-gray-100 dark:border-gray-700 transition-colors
-            ${isToday ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-gray-800/50'}
-          `}
-          onClick={() => {
-            setNewEvent(prev => ({ ...prev, date: dateString }));
-            setIsAddEventOpen(true);
-          }}
-        >
-          <div className="flex justify-between items-start">
-            <span className={`
-              inline-flex items-center justify-center w-6 h-6 rounded-full
-              ${isToday ? 'bg-blue-600 text-white' : 'text-gray-700 dark:text-gray-200'}
-              text-sm font-medium
-            `}>
-              {day}
-            </span>
-            {dayEvents.length > 0 && (
-              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                {dayEvents.length}
-              </span>
-            )}
-          </div>
-          <div className="mt-2 space-y-1">
-            {dayEvents.map((event, idx) => (
-              <div 
-                key={event.id}
-                className="group relative text-xs p-1 rounded bg-gray-100 dark:bg-gray-700 truncate"
-                title={event.title}
-              >
-                <div className="flex justify-between items-center">
-                  <span>{event.title}</span>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      deleteEvent(event.id);
-                    }}
-                    className="hidden group-hover:block"
-                  >
-                    <X className="h-3 w-3 text-gray-500 hover:text-red-500" />
-                  </button>
-                </div>
+        // Previous month's days
+        for (let i = 0; i < adjustedStartDay; i++) {
+          const prevMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0 - (adjustedStartDay - i - 1));
+          cells.push(
+            <div key={`prev-${i}`} className="min-h-[120px] p-2 bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700">
+              <span className="text-gray-400 text-sm">{prevMonthDate.getDate()}</span>
+            </div>
+          );
+        }
+    
+        // Current month's days
+        for (let day = 1; day <= daysInMonth; day++) {
+          const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+          const isToday = date.toDateString() === today.toDateString();
+          const dateString = date.toISOString().split('T')[0];
+          const dayEvents = filteredEvents.filter(event => event.date === dateString);
+          const isInPreviewRange = isDateInPreviewRange(date);
+    
+          cells.push(
+            <div 
+              key={dateString}
+              className={`min-h-[120px] p-2 border border-gray-100 dark:border-gray-700 transition-colors relative
+                ${isToday ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-gray-800/50'}
+                ${!isInPreviewRange ? 'opacity-50' : ''}
+              `}
+              onClick={() => {
+                if (!isInPreviewRange) {
+                  setShowSignupPrompt(true);
+                  return;
+                }
+                setNewEvent(prev => ({ ...prev, date: dateString }));
+                setIsAddEventOpen(true);
+              }}
+            >
+              <div className="flex justify-between items-start">
+                <span className={`
+                  inline-flex items-center justify-center w-6 h-6 rounded-full
+                  ${isToday ? 'bg-blue-600 text-white' : 'text-gray-700 dark:text-gray-200'}
+                  text-sm font-medium
+                `}>
+                  {day}
+                </span>
+                {!isInPreviewRange && (
+                  <LockIcon className="h-4 w-4 text-gray-400" />
+                )}
+                {dayEvents.length > 0 && (
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                    {dayEvents.length}
+                  </span>
+                )}
               </div>
-            ))}
-          </div>
-        </div>
-      );
-    }
-
-    return cells;
-  }, [currentDate, filteredEvents]);
+              <div className="mt-2 space-y-1">
+                {dayEvents.map((event, idx) => (
+                  <div 
+                    key={event.id}
+                    className="group relative text-xs p-1 rounded bg-gray-100 dark:bg-gray-700 truncate"
+                    title={event.title}
+                  >
+                    <div className="flex justify-between items-center">
+                      <span>{event.title}</span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteEvent(event.id);
+                        }}
+                        className="hidden group-hover:block"
+                      >
+                        <X className="h-3 w-3 text-gray-500 hover:text-red-500" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        }
+    
+        return cells;
+      }, [currentDate, filteredEvents]);
+    
 
   return (
     <div className="p-6 bg-white dark:bg-gray-900 min-h-screen">
@@ -276,8 +260,8 @@ const CalendarPreview = () => {
           </div>
         </div>
 
-        {/* Calendar Grid */}
-        <Card>
+           {/* Calendar Grid */}
+           <Card>
           <CardHeader className="pb-0">
             <div className="grid grid-cols-7 border-b dark:border-gray-700">
               {WEEKDAYS.map((day) => (
@@ -296,6 +280,40 @@ const CalendarPreview = () => {
             </div>
           </CardContent>
         </Card>
+
+          {/* Signup Dialog */}
+          <Dialog open={showSignupPrompt} onOpenChange={setShowSignupPrompt}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-bold text-center">Ready to unlock full access?</DialogTitle>
+              <DialogDescription className="text-center">
+                <div className="space-y-4 pt-4">
+                  <div className="flex items-center justify-center">
+                    <CalendarIcon className="h-12 w-12 text-blue-500" />
+                  </div>
+                  <p className="text-lg">
+                    Sign up now to unlock unlimited events, full calendar access, and more features:
+                  </p>
+                  <ul className="text-left space-y-2 ml-6 list-disc">
+                    <li>Create unlimited events</li>
+                    <li>Access your calendar anywhere</li>
+                    <li>Set up recurring events</li>
+                    <li>Get email reminders</li>
+                    <li>Collaborate with team members</li>
+                  </ul>
+                  <div className="pt-4 space-y-2">
+                    <Button className="w-full py-6 text-lg" onClick={() => window.location.href = '/signup'}>
+                        Welcome to the Yum side of Life with LearnHub
+                    </Button>
+                    <p className="text-sm text-gray-500 text-center">
+                      No credit card required • Sign Up Now
+                    </p>
+                  </div>
+                </div>
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
 
         {/* Add Event Dialog */}
         <Dialog open={isAddEventOpen} onOpenChange={setIsAddEventOpen}>
