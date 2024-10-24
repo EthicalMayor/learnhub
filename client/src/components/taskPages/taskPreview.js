@@ -34,7 +34,7 @@ const TaskPreview = () => {
   ];
 
   return (
-    <div className="p-8 bg-gray-50 min-h-screen">
+    <div className="p-8 bg-gray-0 min-h-screen">
       <div className="max-w-4xl mx-auto">
         <Alert className="mb-6 bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200">
           <AlertTitle className="text-purple-800 text-lg font-semibold">Task Manager Preview</AlertTitle>
