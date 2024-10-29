@@ -16,7 +16,7 @@ import CollegeNews from './components/CollegesPages/collegeNews';
 import CareerHunt from './components/CollegesPages/careerHunt';
 import TheGeng from './components/gengpages/thegeng';
 import JoinTheGeng from './components/gengpages/jointhegeng';
-
+import { UserProvider } from './contexts/UserContext';
 const App = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -31,6 +31,7 @@ const App = () => {
   }, []);
 
   return (
+    <UserProvider>
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
@@ -49,6 +50,7 @@ const App = () => {
         <Route path="/join-the-geng" element={<JoinTheGeng />} />
       </Routes>
     </Router>
+    </UserProvider>
   );
 };
 
