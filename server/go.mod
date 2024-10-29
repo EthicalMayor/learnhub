@@ -1,4 +1,4 @@
-module server
+module learnhub/server
 
 go 1.23.2
 
