@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { FcGoogle } from 'react-icons/fc'; 
-import { auth } from '../../firebaseConfig';
-import { useHistory } from 'react-router-dom'; 
+import { auth } from '../../firebaseConfig'; 
 import { useNavigate } from 'react-router-dom';
 import {
   GoogleAuthProvider,
@@ -12,7 +11,7 @@ import { Alert, AlertDescription } from '../custom-components/custom-components'
 
 
 const SignupPage = () => {
-  const history = useHistory(); 
+  const navigate =useNavigate(); 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -61,7 +60,7 @@ const SignupPage = () => {
 
 
     
-      history.push('/dashboard'); 
+      navigate('/dashboard'); 
 
 
     } catch (err) {
@@ -103,7 +102,7 @@ const SignupPage = () => {
 
       setSuccess(true);
 
-        history.push('/dashboard');
+        navigate('/dashboard');
 
     } catch (err) {
       setError(err.message);
