@@ -15,6 +15,7 @@ const SignupPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [loading, setLoading] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -47,6 +48,7 @@ const SignupPage = () => {
         body: JSON.stringify({
           email,
           name,
+          username,
           provider: 'email'
         })
       });
@@ -54,15 +56,8 @@ const SignupPage = () => {
       if (!response.ok) {
         throw new Error('Signup failed');
       }
-
-
       setSuccess(true);
-
-
-    
       navigate('/dashboard'); 
-
-
     } catch (err) {
       setError(err.message);
     } finally {
@@ -74,12 +69,10 @@ const SignupPage = () => {
     setLoading(true);
     setError('');
 
-
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       const token = await result.user.getIdToken();
-
 
       const response = await fetch('http://localhost:8080/signup', {
         method: 'POST',
@@ -90,20 +83,17 @@ const SignupPage = () => {
         body: JSON.stringify({
           email: result.user.email,
           name: result.user.displayName,
-          provider: 'google'
-        })
+          username: result.user.displayName.replace(/\s/g, ''),
+          provider: 'google',
+        }),
       });
 
 
       if (!response.ok) {
         throw new Error('Signup failed');
       }
-
-
       setSuccess(true);
-
-        navigate('/dashboard');
-
+      navigate('/dashboard');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -118,10 +108,10 @@ const SignupPage = () => {
           Learn. Connect. Collaborate.
         </h1>
         <p className="text-center text-gray-600 text-lg mb-8">
-          Learning never stops. Join our Community.
+          Learning never ends. Join our Community.
         </p>
         <h2 className="text-center text-3xl font-bold text-gray-900">
-          Create your account
+          Create your Account
         </h2>
       </div>
 
@@ -182,6 +172,22 @@ const SignupPage = () => {
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg  shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   />  
               </div>
+            </div>
+
+
+            <div>
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+               Create a Username
+              </label>
+              <input
+                id="username"
+                name="username"
+                type="text"
+                required
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="appearance-none block w-full px-3 py-2 border rounded-lg"
+              />
             </div>
 
             <div>

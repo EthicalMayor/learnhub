@@ -28,6 +28,7 @@ type User struct {
 	ID            string    `json:"id"`
 	Email         string    `json:"email"`
 	Name          string    `json:"name"`
+	Username      string    `json:"user_name"`
 	Provider      string    `json:"provider"`
 	CreatedAt     time.Time `json:"created_at"`
 	LastLoginAt   time.Time `json:"last_login_at"`
@@ -37,6 +38,7 @@ type User struct {
 type SignupRequest struct {
 	Email    string `json:"email"`
 	Name     string `json:"name"`
+	Username string `json:"user_name"`
 	Provider string `json:"provider"`
 }
 
@@ -54,40 +56,6 @@ func getEnvOrDefault(key, defaultValue string) string {
 		return defaultValue
 	}
 	return value
-}
-
-func createDatabase(config DBConfig) error {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/",
-		config.User,
-		config.Password,
-		config.Host,
-		config.Port,
-	)
-	db, err := sql.Open("mysql", dsn)
-	if err != nil {
-		return err
-	}
-	defer db.Close()
-
-	_, err = db.Exec("CREATE DATABASE IF NOT EXISTS " + config.DBName)
-	return err
-}
-
-func dropDatabase(config DBConfig) error {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/",
-		config.User,
-		config.Password,
-		config.Host,
-		config.Port,
-	)
-	db, err := sql.Open("mysql", dsn)
-	if err != nil {
-		return err
-	}
-	defer db.Close()
-
-	_, err = db.Exec("DROP DATABASE IF EXISTS " + config.DBName)
-	return err
 }
 
 func initDB(config DBConfig) (*sql.DB, error) {
@@ -115,20 +83,17 @@ func initDB(config DBConfig) (*sql.DB, error) {
 }
 
 func NewServer(dbConfig DBConfig) (*Server, error) {
-	// Get Firebase credentials from the environment variable
 	firebaseCredentialsJSON := os.Getenv("FIREBASE_CREDENTIALS_JSON")
 	if firebaseCredentialsJSON == "" {
 		return nil, fmt.Errorf("FIREBASE_CREDENTIALS_JSON environment variable is not set")
 	}
 
-	// Initialize Firebase App with JSON credentials
 	opt := option.WithCredentialsJSON([]byte(firebaseCredentialsJSON))
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
 		return nil, fmt.Errorf("error initializing Firebase app: %v", err)
 	}
 
-	// Initialize Firebase Auth client
 	fbAuth, err := app.Auth(context.Background())
 	if err != nil {
 		return nil, fmt.Errorf("error initializing Firebase Auth: %v", err)
@@ -185,19 +150,32 @@ func (s *Server) SignupHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer tx.Rollback()
 
-	var exists bool
+	var emailExists bool
 	err = tx.QueryRowContext(r.Context(),
 		"SELECT EXISTS(SELECT 1 FROM users WHERE email = ?)",
-		req.Email,
-	).Scan(&exists)
+		req.Email).Scan(&emailExists)
 	if err != nil {
-		s.logger.Printf("Error checking existing user: %v", err)
+		s.logger.Printf("Error checking existing email: %v", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 
-	if exists {
-		http.Error(w, "User already exists", http.StatusConflict)
+	if emailExists {
+		http.Error(w, "Email already in use", http.StatusConflict)
+		return
+	}
+
+	var usernameExists bool
+	err = tx.QueryRowContext(r.Context(),
+		"SELECT EXISTS(SELECT 1 FROM users WHERE user_name = ?)",
+		req.Username).Scan(&usernameExists)
+	if err != nil {
+		s.logger.Printf("Error checking existing username: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	if usernameExists {
+		http.Error(w, "Username is already in use", http.StatusConflict)
 		return
 	}
 
@@ -205,6 +183,7 @@ func (s *Server) SignupHandler(w http.ResponseWriter, r *http.Request) {
 		ID:            token.UID,
 		Email:         req.Email,
 		Name:          req.Name,
+		Username:      req.Username,
 		Provider:      req.Provider,
 		CreatedAt:     time.Now(),
 		LastLoginAt:   time.Now(),
@@ -212,9 +191,9 @@ func (s *Server) SignupHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, err = tx.ExecContext(r.Context(), `
-		INSERT INTO users (id, email, name, provider, created_at, last_login_at, email_verified)
-		VALUES (?, ?, ?, ?, ?, ?, ?)`,
-		user.ID, user.Email, user.Name, user.Provider,
+		INSERT INTO users (id, email, name, user_name, provider, created_at, last_login_at, email_verified)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+		user.ID, user.Email, user.Name, user.Username, user.Provider,
 		user.CreatedAt, user.LastLoginAt, user.EmailVerified,
 	)
 	if err != nil {
@@ -239,6 +218,9 @@ func validateSignupRequest(req SignupRequest) error {
 	}
 	if req.Name == "" {
 		return fmt.Errorf("name is required")
+	}
+	if req.Username == "" {
+		return fmt.Errorf("username is required")
 	}
 	if req.Provider == "" {
 		return fmt.Errorf("provider is required")
@@ -275,17 +257,13 @@ func main() {
 		DBName:   getEnvOrDefault("DB_NAME", "learnhub"),
 		Port:     getEnvOrDefault("DB_PORT", "3306"),
 	}
-
-	// Initialize the server with the database configuration
 	server, err := NewServer(dbConfig)
 	if err != nil {
 		log.Fatalf("Error initializing server: %v", err)
 	}
 
-	// Set up the HTTP routes
 	http.HandleFunc("/signup", enableCORS(server.SignupHandler))
 
-	// Start the HTTP server
 	log.Printf("Server starting on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
