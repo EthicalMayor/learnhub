@@ -9,13 +9,11 @@ import {
 } from 'firebase/auth';
 import { Alert, AlertDescription } from '../custom-components/custom-components';
 
-
 const SignupPage = () => {
-  const navigate =useNavigate(); 
+  const navigate = useNavigate(); 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [username, setUsername] = useState('');
   const [loading, setLoading] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -25,7 +23,6 @@ const SignupPage = () => {
     setLoading(true);
     setError('');
 
-
     try {
       // create user in firebase
       const userCredential = await createUserWithEmailAndPassword(
@@ -33,7 +30,6 @@ const SignupPage = () => {
         email,
         password
       );
-
 
       // get firebase token
       const token = await userCredential.user.getIdToken();
@@ -44,11 +40,9 @@ const SignupPage = () => {
           'Content-Type': 'application/json',
           'Authorization': token
         },
-
         body: JSON.stringify({
           email,
           name,
-          username,
           provider: 'email'
         })
       });
@@ -83,11 +77,9 @@ const SignupPage = () => {
         body: JSON.stringify({
           email: result.user.email,
           name: result.user.displayName,
-          username: result.user.displayName.replace(/\s/g, ''),
           provider: 'google',
         }),
       });
-
 
       if (!response.ok) {
         throw new Error('Signup failed');
@@ -169,31 +161,15 @@ const SignupPage = () => {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg  shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  />  
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />  
               </div>
             </div>
 
-
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-               Create a Username
-              </label>
-              <input
-                id="username"
-                name="username"
-                type="text"
-                required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="appearance-none block w-full px-3 py-2 border rounded-lg"
-              />
-            </div>
-
-            <div>
-            <label 
-               htmlFor="email"
-               className="block text-sm font-medium text-gray-700"
+              <label 
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
               >
                 Email address
               </label>
@@ -211,28 +187,26 @@ const SignupPage = () => {
               </div>
             </div>
 
-
             <div>
               <label 
-               htmlFor="password"
-               className="block text-sm font-medium text-gray-700"
-            >
-              Password
-            </label>
-            <div className="mt-1">
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Password
+              </label>
+              <div className="mt-1">
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
             </div>
-            </div>
-
 
             <div>
               <button 
@@ -240,7 +214,6 @@ const SignupPage = () => {
                 disabled={loading}
                 className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-colors duration-200"
               >
-
                 {loading ? 'Creating account...' : 'Create account'}
               </button>
             </div>

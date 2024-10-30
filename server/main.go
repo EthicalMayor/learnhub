@@ -82,21 +82,11 @@ func initDB(config DBConfig) (*sql.DB, error) {
 	return db, nil
 }
 
-func NewServer(dbConfig DBConfig) (*Server, error) {
-	firebaseCredentialsJSON := os.Getenv("FIREBASE_CREDENTIALS_JSON")
-	if firebaseCredentialsJSON == "" {
-		return nil, fmt.Errorf("FIREBASE_CREDENTIALS_JSON environment variable is not set")
-	}
-
+func NewServer(dbConfig DBConfig, firebaseCredentialsJSON string) (*Server, error) {
 	opt := option.WithCredentialsJSON([]byte(firebaseCredentialsJSON))
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
 		return nil, fmt.Errorf("error initializing Firebase app: %v", err)
-	}
-
-	fbAuth, err := app.Auth(context.Background())
-	if err != nil {
-		return nil, fmt.Errorf("error initializing Firebase Auth: %v", err)
 	}
 
 	// Initialize the database connection
@@ -107,7 +97,7 @@ func NewServer(dbConfig DBConfig) (*Server, error) {
 
 	return &Server{
 		db:     db,
-		fbAuth: fbAuth,
+		fbAuth: app.Auth(context.Background()), // Initialize fbAuth
 		logger: log.New(os.Stdout, "[AUTH] ", log.LstdFlags),
 		config: dbConfig,
 	}, nil
@@ -244,20 +234,25 @@ func enableCORS(next http.HandlerFunc) http.HandlerFunc {
 }
 
 func main() {
-
+	// Load Firebase credentials from the environment variable
 	firebaseCredentialsJSON := os.Getenv("FIREBASE_CREDENTIALS_JSON")
 	if firebaseCredentialsJSON == "" {
 		log.Fatalf("FIREBASE_CREDENTIALS_JSON environment variable is not set")
 	}
 
+	// Log the loaded credentials (for debugging, you can remove this later)
+	fmt.Println("Loaded Firebase Credentials JSON:", firebaseCredentialsJSON)
+
 	dbConfig := DBConfig{
 		Host:     getEnvOrDefault("DB_HOST", "localhost"),
 		User:     getEnvOrDefault("DB_USER", "root"),
-		Password: getEnvOrDefault("DB_PASSWORD", "mdmdndshdiwr82482h2kdnIop[0.,;[sj"),
+		Password: getEnvOrDefault("DB_PASSWORD", "your_password_here"),
 		DBName:   getEnvOrDefault("DB_NAME", "learnhub"),
 		Port:     getEnvOrDefault("DB_PORT", "3306"),
 	}
-	server, err := NewServer(dbConfig)
+
+	// Initialize the server with the database configuration
+	server, err := NewServer(dbConfig, firebaseCredentialsJSON)
 	if err != nil {
 		log.Fatalf("Error initializing server: %v", err)
 	}
