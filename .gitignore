@@ -21,3 +21,6 @@ env/
 .DS_Store
 Thumbs.db
 node_modules
+
+
+firebase_credentials.json
