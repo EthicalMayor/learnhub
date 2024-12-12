@@ -46,24 +46,3 @@ const App = () => {
 };
 
 export default App;
-<UserProvider>
-<Router>
-  <Routes>
-    <Route path="/" element={<LandingPage />} />
-    <Route path="/login" element={<LoginPage />} />
-    <Route path="/signup" element={<SignUpPage />} />
-    <Route path="/chat" element={<ChatPreview />} />
-    <Route path="/dashboard" element={<Dashboard />} />
-    <Route path="/documents" element={<Document />} />
-    <Route path="/resource-vault" element={<ResourceVaultPreview />} />
-    <Route path="/video-conferencing" element={<VideoConferencingPreview />} />
-    <Route path="/tasks" element={<TaskPreview />} />
-    <Route path="/calendar" element={<CalendarPreview />} />
-    <Route path="/college-news" element={<CollegeNews />} />
-    <Route path="/career-hunt" element={<CareerHunt />} />
-    <Route path="/the-geng" element={<TheGeng />} />
-    <Route path="/join-the-geng" element={<JoinTheGeng />} />
-    
-  </Routes>
-</Router>
-</UserProvider>
