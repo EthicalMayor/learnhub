@@ -26,7 +26,7 @@ const Dashboard = () => {
       <div className="bg-white rounded-xl p-8 max-w-md text-center shadow-2xl animate-fade-up">
         <Sparkles className="w-12 h-12 text-blue-500 mx-auto mb-4 animate-pulse" />
         <h1 className="text-2xl font-bold mb-2">Welcome to LearnHub!</h1>
-        <p className="text-gray-600 mb-6">Let's get you started on your learning journey</p>
+        <p className="text-gray-600 mb-6">Let's get you into the wave of the action</p>
         <button 
           onClick={() => setShowWelcome(false)}
           className="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 transition-colors"
@@ -92,7 +92,6 @@ const Dashboard = () => {
             <NavItem icon={<CheckSquare className="w-5 h-5" />} label="Tasks" to="/task" />
             <NavItem icon={<Calendar className="w-5 h-5" />} label="Calendar" to="/calendar" />
             <NavItem icon={<Users className="w-5 h-5" />} label="Gengs" to="/the-geng" />
-            <NavItem icon={<Globe className="w-5 h-5" />} label="Collabos" to="/collabos" />
           </nav>
         </div>
         <div className="px-6 py-8 border-t border-gray-100">

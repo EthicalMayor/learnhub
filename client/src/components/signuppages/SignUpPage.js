@@ -97,14 +97,15 @@ const SignupPage = () => {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h1 className="text-center text-4xl font-bold text-black mb-2">
-          Learn. Connect. Collaborate.
+         LearnHub
         </h1>
+        <h2 className="text-center text-2xl font-bold text-gray-900">
+          Create your Account
+        </h2>
         <p className="text-center text-gray-600 text-lg mb-8">
           Learning never ends. Join our Community.
         </p>
-        <h2 className="text-center text-3xl font-bold text-gray-900">
-          Create your Account
-        </h2>
+        
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -140,7 +141,7 @@ const SignupPage = () => {
             </div>
             <div className="relative flex justify-center text-sm">
               <span className="px-2 bg-white text-gray-500">
-                Or sign up with email
+                Or sign up with Email
               </span>
             </div>
           </div>
@@ -171,7 +172,7 @@ const SignupPage = () => {
                 htmlFor="email"
                 className="block text-sm font-medium text-gray-700"
               >
-                Email address
+                Email
               </label>
               <div className="mt-1">
                 <input 

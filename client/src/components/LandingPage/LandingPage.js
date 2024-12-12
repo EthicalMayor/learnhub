@@ -5,6 +5,7 @@ import { faBars, faFileText, faGraduationCap, faComments, faCheckSquare, faCalen
 import { motion, useScroll, useAnimation, useTransform, useSpring, AnimatePresence } from 'framer-motion';
 import { Link, Button } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
+import ProductDropdown from '../product/ProductDropdown';
 import logo from '../../assets/logos/learnhub-logo.png';
 import logo1 from '../../assets/logos/mit-logo.jpg';
 import logo2 from '../../assets/logos/harvard-logo.jpg';
@@ -24,9 +25,7 @@ import running from '../../assets/hero/running.jpg';
 import trustedByImage from '../../assets/imageee.jpg';
 import feature from '../../assets/feature/feature.jpg';
 import chat from '../../assets/chat/chats.jpg';
-import background1 from '../../assets/image3.jpg';
-import background2 from '../../assets/image6.jpg';
-import background3 from '../../assets/image3.jpg';
+
 
 const LandingPage = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -55,7 +54,7 @@ const LandingPage = () => {
       image: videoConferencing
     },
     { title: "Join a Geng and Send Invites", 
-      subtitle: "Learning is more fun with Learnhub",
+      subtitle: "Learning is more fun with Learnhub Gengs",
       image: gengs
     },
     { title: "Our Secret to Success?", 
@@ -241,7 +240,6 @@ const renderSlideContent = () => (
           >
             {slideContent[currentSlide].subtitle}
           </motion.h2>
-            {/* Optional: Add call-to-action buttons for slides */}
             <motion.div
             className="hidden md:flex justify-center space-x-4"
             variants={itemVariants}
@@ -259,7 +257,6 @@ const renderSlideContent = () => (
         </motion.div>
       </div>
     </div>
-      {/* Optional: Add navigation dots */}
     <div className="absolute bottom-8 left-0 right-0 z-20">
       <div className="flex justify-center space-x-2">
         {slideContent.map((_, index) => (
@@ -277,7 +274,7 @@ const renderSlideContent = () => (
   </motion.div>
 );
 
-// Optional: Add swipe functionality for mobile
+
 useEffect(() => {
   let touchStartX = 0;
   let touchEndX = 0;
@@ -437,17 +434,8 @@ return (
     {/* Full Navigation for larger screens */}
           <nav className="hidden md:flex w-full justify-between items-center">
             <div className="flex space-x-6 ml-12">
-              <NavDropdown 
-                title="Product" 
-                items={[
-                  { title: 'Documents', path: '/document', icon: faFileText },
-                  { title: 'Resource Vault', path: '/resource', icon: faGraduationCap },
-                  { title: 'Video Conferencing', path: '/video-conferencing', icon: faComments },
-                  { title: 'Chats', path: '/chat', icon: faComments },
-                  { title: 'Tasks', path: '/task', icon: faCheckSquare },
-                  { title: 'Calendars', path: '/calendar', icon: faCalendar },
-                ]}
-              />
+              <ProductDropdown />
+
               <NavDropdown 
                 title="Colleges" 
                 items={[
@@ -477,15 +465,11 @@ return (
           <nav className="md:hidden bg-white border-t border-gray-200">
             <div className="container mx-auto px-4 py-2">
               <MobileNavItem 
-                title="Product" 
-                items={[
-                  { title: 'Documents', path: '/document' },
-                  { title: 'Resource Vault', path: '/resource' },
-                  { title: 'Video Conferencing', path: '/video-conferencing' },
-                  { title: 'Chats', path: '/chat' },
-                  { title: 'Tasks', path: '/task' },
-                  { title: 'Calendars', path: '/calendar' },
-                ]}  
+                title="Product"
+                item={PRODUCTS.map(product => ({
+                  title: product.name,
+                  path: product.href
+                }))}
               />
         <MobileNavItem 
           title="Colleges" 

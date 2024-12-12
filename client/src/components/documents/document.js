@@ -1,176 +1,377 @@
-import React from 'react';
-import { Plus, Search, Filter, MoreVertical, FileText, Share2, Clock, Users, Star, FolderOpen } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent, Alert, AlertTitle, AlertDescription, Button, Input } from '../custom-components/custom-components';
-import { Link } from 'react-router-dom';
+import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
+import axios from 'axios';
+import {
+  Plus,
+  FileText,
+  Edit,
+  Trash2,
+  Users,
+  Clock,
+  MoreVertical
+} from 'lucide-react';
 
-const DocumentPreview = () => {
-  const previewDocuments = [
-    { 
-      id: 1, 
-      title: 'Advanced Physics Notes - Quantum Mechanics',
-      type: 'Study Notes',
-      lastModified: '2024-10-21',
-      shared: true,
-      collaborators: 3,
-      starred: true,
-      folder: 'Physics 401'
-    },
-    { 
-      id: 2, 
-      title: 'Research Paper - Machine Learning Applications',
-      type: 'Research',
-      lastModified: '2024-10-20',
-      shared: true,
-      collaborators: 5,
-      starred: false,
-      folder: 'CS Research'
-    },
-    { 
-      id: 3, 
-      title: 'Study Group Meeting Minutes - Oct 2024',
-      type: 'Meeting Notes',
-      lastModified: '2024-10-19',
-      shared: true,
-      collaborators: 8,
-      starred: true,
-      folder: 'Study Group'
-    }
-  ];
+// Provisional Custom Components
+const Card = ({ children, className, ...props }) => (
+  <div className={`border rounded-lg shadow-sm ${className}`} {...props}>
+    {children}
+  </div>
+);
 
-  const filters = [
-    { label: 'All Documents', count: 124 },
-    { label: 'Shared with me', count: 45 },
-    { label: 'Starred', count: 12 },
-    { label: 'Recent', count: 28 }
-  ];
+const CardHeader = ({ children, className, ...props }) => (
+  <div className={`p-4 border-b ${className}`} {...props}>
+    {children}
+  </div>
+);
+
+const CardTitle = ({ children, className, ...props }) => (
+  <h2 className={`text-xl font-semibold ${className}`} {...props}>
+    {children}
+  </h2>
+);
+
+const CardContent = ({ children, className, ...props }) => (
+  <div className={`p-4 ${className}`} {...props}>
+    {children}
+  </div>
+);
+
+const Button = ({ children, onClick, className, disabled, variant = 'primary', ...props }) => {
+  const variantStyles = {
+    primary: 'bg-blue-500 text-white hover:bg-blue-600',
+    outline: 'border border-gray-300 bg-white hover:bg-gray-100',
+    ghost: 'hover:bg-gray-100'
+  };
 
   return (
-    <div className="relative min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto p-6">
-        <Alert className="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
-          <AlertTitle className="text-blue-800 text-lg font-semibold">Document Features</AlertTitle>
-          <AlertDescription className="text-blue-700">
-            Experience LearnHub's advanced document management system. Create, collaborate, and organize your academic content efficiently.
-          </AlertDescription>
-        </Alert>
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={`
+        px-4 py-2 rounded-md transition-colors 
+        ${variantStyles[variant]} 
+        ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
+        ${className}
+      `}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
 
-        <div className="filter blur-[0.4px]">
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Documents</h1>
-              <p className="text-gray-500 mt-1">Manage your academic content in one place</p>
-            </div>
-            <div className="flex gap-3">
-              <Button variant="outline" className="border-gray-200">
-                <FolderOpen className="w-4 h-4 mr-2" />
-                New Folder
-              </Button>
-              <Button className="bg-blue-600 hover:bg-blue-700">
-                <Plus className="w-4 h-4 mr-2" />
-                New Document
-              </Button>
-            </div>
-          </div>
+const Dialog = ({ open, onOpenChange, children }) => {
+  if (!open) return null;
 
-          <div className="grid grid-cols-12 gap-6">
-            {/* Left Sidebar */}
-            <div className="col-span-3">
-              <div className="bg-white rounded-lg shadow-sm p-4">
-                <nav className="space-y-2">
-                  {filters.map((filter, index) => (
-                    <button
-                      key={index}
-                      className="w-full flex items-center justify-between px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-md"
-                    >
-                      <span>{filter.label}</span>
-                      <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs">
-                        {filter.count}
-                      </span>
-                    </button>
-                  ))}
-                </nav>
-              </div>
-            </div>
-
-            {/* Main Content */}
-            <div className="col-span-9">
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <div className="flex gap-4 mb-6">
-                  <div className="flex-1">
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                      <Input 
-                        placeholder="Search documents..."
-                        className="pl-10 w-full bg-gray-50"
-                      />
-                    </div>
-                  </div>
-                  <Button variant="outline" className="border-gray-200">
-                    <Filter className="w-4 h-4 mr-2" />
-                    Filter
-                  </Button>
-                </div>
-
-                <div className="space-y-3">
-                  {previewDocuments.map((doc) => (
-                    <Card key={doc.id} className="hover:bg-gray-50 transition-colors duration-200">
-                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-lg font-medium">
-                          <div className="flex items-center">
-                            <FileText className="w-5 h-5 mr-2 text-blue-600" />
-                            <div>
-                              <div className="flex items-center gap-2">
-                                {doc.title}
-                                {doc.starred && <Star className="w-4 h-4 text-yellow-400 fill-current" />}
-                              </div>
-                              <div className="text-sm text-gray-500 font-normal mt-1">
-                                {doc.folder} • {doc.type}
-                              </div>
-                            </div>
-                          </div>
-                        </CardTitle>
-                        <div className="flex items-center gap-4">
-                          <div className="flex items-center text-gray-500">
-                            <Users className="w-4 h-4 mr-1" />
-                            <span className="text-sm">{doc.collaborators}</span>
-                          </div>
-                          <div className="flex items-center text-gray-500">
-                            <Clock className="w-4 h-4 mr-1" />
-                            <span className="text-sm">{doc.lastModified}</span>
-                          </div>
-                          <Button variant="ghost" size="sm">
-                            <MoreVertical className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </CardHeader>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* CTA */}
-        <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <div>
-              <h3 className="font-semibold text-xl">Enjoy LearnHub Document Features</h3>
-              <p className="text-blue-100">Collaborate seamlessly with unlimited storage and advanced tools</p>
-            </div>
-            <div className="flex gap-4">
-              <Link to="/login" className="px-6 py-2 bg-white text-blue-600 rounded-full font-semibold hover:bg-blue-50 transition-colors">
-                Log In
-              </Link>
-              <Link to="/signup" className="px-6 py-2 bg-blue-500 text-white rounded-full font-semibold hover:bg-blue-400 transition-colors">
-                Sign Up
-              </Link>
-            </div>
-          </div>
-        </div>
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+        {React.Children.map(children, child => 
+          React.cloneElement(child, { onClose: () => onOpenChange(false) })
+        )}
       </div>
     </div>
   );
 };
 
-export default DocumentPreview;
+const DialogContent = ({ children, onClose }) => (
+  <div className="p-6">
+    {children}
+    <button 
+      onClick={onClose} 
+      className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+    >
+      ✕
+    </button>
+  </div>
+);
+
+const DialogHeader = ({ children }) => (
+  <div className="border-b pb-4 mb-4">
+    {children}
+  </div>
+);
+
+const DialogTitle = ({ children }) => (
+  <h2 className="text-xl font-semibold">{children}</h2>
+);
+
+const DialogDescription = ({ children }) => (
+  <p className="text-gray-500 text-sm">{children}</p>
+);
+
+const DialogFooter = ({ children }) => (
+  <div className="flex justify-end space-x-2 border-t pt-4 mt-4">
+    {children}
+  </div>
+);
+
+const Input = ({ value, onChange, className, ...props }) => (
+  <input
+    type="text"
+    value={value}
+    onChange={onChange}
+    className={`border rounded-md px-3 py-2 w-full ${className}`}
+    {...props}
+  />
+);
+
+const Label = ({ children, htmlFor, className }) => (
+  <label htmlFor={htmlFor} className={`block text-sm font-medium text-gray-700 ${className}`}>
+    {children}
+  </label>
+);
+
+const Select = ({ value, onValueChange, children }) => {
+  const handleChange = (e) => {
+    onValueChange(e.target.value);
+  };
+
+  return (
+    <select 
+      value={value} 
+      onChange={handleChange}
+      className="border rounded-md px-3 py-2 w-full"
+    >
+      {children}
+    </select>
+  );
+};
+
+const SelectTrigger = ({ children }) => children;
+const SelectValue = ({ placeholder }) => null;
+const SelectContent = ({ children }) => children;
+const SelectItem = ({ value, children }) => (
+  <option value={value}>{children}</option>
+);
+
+const DropdownMenu = ({ children }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  
+  return (
+    <div className="relative">
+      {React.Children.map(children, child => 
+        React.cloneElement(child, { 
+          onClick: () => setIsOpen(!isOpen),
+          'aria-expanded': isOpen 
+        })
+      )}
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-10">
+          {React.Children.map(
+            children[1].props.children, 
+            item => React.cloneElement(item, { 
+              onClick: () => {
+                item.props.onSelect?.();
+                setIsOpen(false);
+              }
+            })
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const DropdownMenuTrigger = ({ children, ...props }) => children;
+const DropdownMenuContent = ({ children }) => children;
+const DropdownMenuItem = ({ children, onSelect, className, ...props }) => (
+  <div 
+    className={`px-4 py-2 hover:bg-gray-100 cursor-pointer ${className}`} 
+    onClick={onSelect}
+    {...props}
+  >
+    {children}
+  </div>
+);
+
+// Tooltip Placeholders
+const TooltipProvider = ({ children }) => children;
+const Tooltip = ({ children }) => children;
+const TooltipTrigger = ({ children }) => children;
+const TooltipContent = ({ children }) => null;
+
+// Rest of the Document Management Component remains the same as in the previous implementation
+const Document = () => {
+  const [documents, setDocuments] = useState([]);
+  const [selectedDocument, setSelectedDocument] = useState(null);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [newDocument, setNewDocument] = useState({
+    title: '',
+    type: 'Study Notes'
+  });
+
+  const fetchDocuments = useCallback(async () => {
+    try {
+      const response = await axios.get('/api/documents');
+      setDocuments(response.data);
+    } catch (error) {
+      console.error('Failed to fetch documents:', error);
+    }
+  }, []);
+
+  const createDocument = async () => {
+    try {
+      const documentData = {
+        title: newDocument.title,
+        type: newDocument.type,
+        id: `doc-${Date.now()}`,
+        content: '',
+        owner: 'current_user',
+        collaborators: [],
+        lastModified: new Date().toISOString(),
+        permissions: {
+          view: ['current_user'],
+          edit: ['current_user']
+        }
+      };
+
+      const response = await axios.post('/api/documents', documentData);
+      setDocuments(prev => [...prev, response.data]);
+      setIsCreateDialogOpen(false);
+      setNewDocument({ title: '', type: 'Study Notes' });
+    } catch (error) {
+      console.error('Document creation failed:', error);
+    }
+  };
+
+  const deleteDocument = async (id) => {
+    try {
+      await axios.delete(`/api/documents/${id}`);
+      setDocuments(prev => prev.filter(doc => doc.id !== id));
+    } catch (error) {
+      console.error('Failed to delete document:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDocuments();
+  }, []);
+
+  return (
+    <div className="p-6 bg-gray-50 min-h-screen">
+      <div className="max-w-6xl mx-auto">
+        <Card className="mb-6">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="flex items-center">
+              <FileText className="mr-2" /> Document Management
+            </CardTitle>
+            <Button onClick={() => setIsCreateDialogOpen(true)}>
+              <Plus className="mr-2" /> Create Document
+            </Button>
+          </CardHeader>
+        </Card>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {documents.map(doc => (
+            <Card key={doc.id} className="hover:shadow-lg transition-shadow">
+              <CardHeader className="flex flex-row justify-between items-center">
+                <div className="flex items-center space-x-2">
+                  <FileText className="text-blue-500" />
+                  <h3 className="font-semibold">{doc.title}</h3>
+                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    <Button variant="ghost">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem 
+                      onSelect={() => setSelectedDocument(doc)}
+                      className="flex items-center"
+                    >
+                      <Edit className="mr-2 h-4 w-4" /> Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onSelect={() => deleteDocument(doc.id)}
+                      className="flex items-center text-red-500"
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" /> Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </CardHeader>
+              <CardContent>
+                <div className="flex justify-between text-sm text-gray-500">
+                  <div>
+                    <Users className="mr-1 h-4 w-4 inline" /> 
+                    {doc.collaborators.length} Collaborators
+                  </div>
+                  <div>
+                    <Clock className="mr-1 h-4 w-4 inline" /> 
+                    {new Date(doc.lastModified).toLocaleDateString()}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create New Document</DialogTitle>
+              <DialogDescription>
+                Fill in the details for your new document.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="title" className="text-right">
+                  Title
+                </Label>
+                <Input
+                  id="title"
+                  value={newDocument.title}
+                  onChange={(e) => setNewDocument(prev => ({
+                    ...prev, 
+                    title: e.target.value
+                  }))}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="type" className="text-right">
+                  Type
+                </Label>
+                <Select 
+                  value={newDocument.type}
+                  onValueChange={(value) => setNewDocument(prev => ({
+                    ...prev, 
+                    type: value
+                  }))}
+                >
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Select document type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Study Notes">Study Notes</SelectItem>
+                    <SelectItem value="Research">Research</SelectItem>
+                    <SelectItem value="Presentation">Presentation</SelectItem>
+                    <SelectItem value="Spreadsheet">Spreadsheet</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button 
+                variant="outline" 
+                onClick={() => setIsCreateDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={createDocument}
+                disabled={!newDocument.title}
+              >
+                Create Document
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </div>
+  );
+};
+
+export default Document;

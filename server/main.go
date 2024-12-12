@@ -10,6 +10,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/joho/godotenv"
+
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/auth"
 	_ "github.com/go-sql-driver/mysql"
@@ -28,7 +30,6 @@ type User struct {
 	ID            string    `json:"id"`
 	Email         string    `json:"email"`
 	Name          string    `json:"name"`
-	Username      string    `json:"user_name"`
 	Provider      string    `json:"provider"`
 	CreatedAt     time.Time `json:"created_at"`
 	LastLoginAt   time.Time `json:"last_login_at"`
@@ -38,7 +39,12 @@ type User struct {
 type SignupRequest struct {
 	Email    string `json:"email"`
 	Name     string `json:"name"`
-	Username string `json:"user_name"`
+	Provider string `json:"provider"`
+}
+
+type LoginRequest struct {
+	Email    string `json:"email"`
+	Name     string `json:"name"`
 	Provider string `json:"provider"`
 }
 
@@ -50,10 +56,17 @@ type Server struct {
 	config DBConfig
 }
 
-func getEnvOrDefault(key, defaultValue string) string {
+func loadEnvVariables() {
+	// Load environment variables from .env file
+	if err := godotenv.Load(".env"); err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+}
+
+func getEnv(key string) string {
 	value := os.Getenv(key)
 	if value == "" {
-		return defaultValue
+		log.Fatalf("ERROR: Environment variable %s is not set", key)
 	}
 	return value
 }
@@ -83,13 +96,19 @@ func initDB(config DBConfig) (*sql.DB, error) {
 }
 
 func NewServer(dbConfig DBConfig, firebaseCredentialsJSON string) (*Server, error) {
+	ctx := context.Background()
+
 	opt := option.WithCredentialsJSON([]byte(firebaseCredentialsJSON))
-	app, err := firebase.NewApp(context.Background(), nil, opt)
+	app, err := firebase.NewApp(ctx, nil, opt)
 	if err != nil {
 		return nil, fmt.Errorf("error initializing Firebase app: %v", err)
 	}
 
-	// Initialize the database connection
+	fbAuth, err := app.Auth(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("error getting Firebase auth client: %v", err)
+	}
+
 	db, err := initDB(dbConfig)
 	if err != nil {
 		return nil, fmt.Errorf("error initializing database: %v", err)
@@ -97,7 +116,7 @@ func NewServer(dbConfig DBConfig, firebaseCredentialsJSON string) (*Server, erro
 
 	return &Server{
 		db:     db,
-		fbAuth: app.Auth(context.Background()), // Initialize fbAuth
+		fbAuth: fbAuth,
 		logger: log.New(os.Stdout, "[AUTH] ", log.LstdFlags),
 		config: dbConfig,
 	}, nil
@@ -155,25 +174,10 @@ func (s *Server) SignupHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var usernameExists bool
-	err = tx.QueryRowContext(r.Context(),
-		"SELECT EXISTS(SELECT 1 FROM users WHERE user_name = ?)",
-		req.Username).Scan(&usernameExists)
-	if err != nil {
-		s.logger.Printf("Error checking existing username: %v", err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-	}
-	if usernameExists {
-		http.Error(w, "Username is already in use", http.StatusConflict)
-		return
-	}
-
 	user := User{
 		ID:            token.UID,
 		Email:         req.Email,
 		Name:          req.Name,
-		Username:      req.Username,
 		Provider:      req.Provider,
 		CreatedAt:     time.Now(),
 		LastLoginAt:   time.Now(),
@@ -181,9 +185,9 @@ func (s *Server) SignupHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, err = tx.ExecContext(r.Context(), `
-		INSERT INTO users (id, email, name, user_name, provider, created_at, last_login_at, email_verified)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-		user.ID, user.Email, user.Name, user.Username, user.Provider,
+		INSERT INTO users (id, email, name, provider, created_at, last_login_at, email_verified)
+		VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		user.ID, user.Email, user.Name, user.Provider,
 		user.CreatedAt, user.LastLoginAt, user.EmailVerified,
 	)
 	if err != nil {
@@ -209,9 +213,6 @@ func validateSignupRequest(req SignupRequest) error {
 	if req.Name == "" {
 		return fmt.Errorf("name is required")
 	}
-	if req.Username == "" {
-		return fmt.Errorf("username is required")
-	}
 	if req.Provider == "" {
 		return fmt.Errorf("provider is required")
 	}
@@ -234,31 +235,36 @@ func enableCORS(next http.HandlerFunc) http.HandlerFunc {
 }
 
 func main() {
-	// Load Firebase credentials from the environment variable
-	firebaseCredentialsJSON := os.Getenv("FIREBASE_CREDENTIALS_JSON")
-	if firebaseCredentialsJSON == "" {
-		log.Fatalf("FIREBASE_CREDENTIALS_JSON environment variable is not set")
+	loadEnvVariables() // Load .env file before accessing env variables
+
+	// Load Firebase credentials
+	firebaseCredentialsPath := os.Getenv("FIREBASE_CREDENTIALS_PATH")
+
+	firebaseCredentialsJSON, err := os.ReadFile(firebaseCredentialsPath)
+
+	if err != nil {
+		log.Fatalf("ERROR: error reading Firebase credentials file: %v", err)
 	}
 
-	// Log the loaded credentials (for debugging, you can remove this later)
-	fmt.Println("Loaded Firebase Credentials JSON:", firebaseCredentialsJSON)
+	log.Printf("Firebase credentials content loaded successfully")
 
 	dbConfig := DBConfig{
-		Host:     getEnvOrDefault("DB_HOST", "localhost"),
-		User:     getEnvOrDefault("DB_USER", "root"),
-		Password: getEnvOrDefault("DB_PASSWORD", "your_password_here"),
-		DBName:   getEnvOrDefault("DB_NAME", "learnhub"),
-		Port:     getEnvOrDefault("DB_PORT", "3306"),
+		Host:     os.Getenv("DB_HOST"),
+		User:     os.Getenv("DB_USER"),
+		Password: os.Getenv("DB_PASSWORD"),
+		DBName:   os.Getenv("DB_NAME"),
+		Port:     os.Getenv("DB_PORT"),
 	}
 
-	// Initialize the server with the database configuration
-	server, err := NewServer(dbConfig, firebaseCredentialsJSON)
+	server, err := NewServer(dbConfig, string(firebaseCredentialsJSON))
 	if err != nil {
-		log.Fatalf("Error initializing server: %v", err)
+		log.Fatalf("ERROR: Error initializing server: %v", err)
 	}
 
+	// Setup routes
 	http.HandleFunc("/signup", enableCORS(server.SignupHandler))
 
+	// Start server
 	log.Printf("Server starting on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
