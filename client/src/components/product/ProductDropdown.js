@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown } from 'lucide-react';
+import { Users } from 'lucide-react';
 
 const PRODUCTS = [
   {
@@ -24,7 +24,7 @@ const PRODUCTS = [
   {
     name: 'Gengs',
     description: 'Creative collaboration and brainstorming',
-    icon: '💡',
+    icon: <Users className="w-5 h-5 text-gray-600" />,
     href: '/products/gengs',
   },
   {
@@ -59,37 +59,31 @@ const ProductDropdown = () => {
   }, []);
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div ref={dropdownRef} className="relative">
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="flex items-center text-gray-700 hover:text-black transition-colors duration-200 font-medium"
+        className="text-black text-sm lg:text-base font-bold hover:text-gray-600 transition duration-300"
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
         Products
-        <ChevronDown className="ml-2" />
       </button>
 
       {isOpen && (
-        <div
-          className="absolute top-full left-0 mt-4 w-screen max-w-4xl bg-white shadow-2xl rounded-lg border border-gray-100 overflow-hidden"
-          role="menu"
-        >
-          <div className="grid grid-cols-3 gap-4 p-6">
+        <div className="absolute left-0 mt-2 w-[400px] bg-white shadow-lg rounded-lg border border-gray-200 p-2">
+          <div className="grid grid-cols-2 gap-2">
             {PRODUCTS.map((product) => (
               <Link
                 key={product.name}
                 to={product.href}
-                className="group p-4 hover:bg-gray-50 rounded-lg transition-colors duration-200 flex items-start"
+                className="flex items-start p-2 hover:bg-gray-50 rounded-lg transition-colors duration-200 group"
               >
-                <div className="text-3xl mr-4 opacity-70 group-hover:opacity-100 transition-opacity">
-                  {product.icon}
-                </div>
+                <span className="text-xl mr-3">{product.icon}</span>
                 <div>
-                  <div className="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
+                  <h3 className="font-sans font-semibold text-gray-900 group-hover:text-blue-600 transition-colors text-sm">
                     {product.name}
-                  </div>
-                  <p className="text-sm text-gray-500 mt-1">
+                  </h3>
+                  <p className="text-gray-500 text-xs font-sans font-normal">
                     {product.description}
                   </p>
                 </div>
@@ -103,3 +97,5 @@ const ProductDropdown = () => {
 };
 
 export default ProductDropdown;
+
+ 

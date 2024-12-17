@@ -4,6 +4,9 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase'; // Import your Firebase auth
 import LandingPage from './components/LandingPage/LandingPage';
 import ProductDropdown from './components/product/ProductDropdown';
+import SpreadsheetEditor from './components/documents/SpreadsheetEditor';
+import TextEditor from './components/documents/TextEditor';
+import DocumentDashboard from './components/documents/DocumentDashboard';
 import LoginPage from './components/loginPage/LoginPage';
 import SignUpPage from './components/signuppages/SignUpPage';
 import Dashboard from './components/dashboardpages/dashboard';
@@ -39,6 +42,9 @@ const App = () => {
         <Route path="/the-geng" element={<TheGeng />} />
         <Route path="/join-the-geng" element={<JoinTheGeng />} />
         <Route path="/product" element={<ProductDropdown />} />
+        <Route path="/documentdashboard" element={<DocumentDashboard />} />
+        <Route path="/texteditor" element={<TextEditor />} />
+        <Route path="/spreadsheeteditor" element={<SpreadsheetEditor />} />
       </Routes>
     </Router>
     </UserProvider>
